@@ -6,10 +6,45 @@
 //
 
 #include <iostream>
+#include <vector>
+#include <random>
 
-int main(int argc, const char * argv[]) {
-    // insert code here...
-    std::cout << "Xcode and Github!\n";
-    std::cout << "Add .gitignore\n";
+int main() {
+    int n;
+    
+    std::cout << "Введите количество городов: ";
+    std::cin >> n;
+
+    
+    std::vector<std::vector<int>> costMatrix(n, std::vector<int>(n, 0));
+    
+    int minCost, maxCost;
+    std::cout << "Введите минимальную стоимость маршрута: ";
+    std::cin >> minCost;
+    std::cout << "Введите максимальную стоимость маршрута: ";
+    std::cin >> maxCost;
+
+    
+    std::random_device rd;
+    std::mt19937_64 gen(rd());
+    std::uniform_int_distribution<int> dist(minCost, maxCost);
+    
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            if (i == j) {
+                costMatrix[i][j] = 0;
+            } else {
+                costMatrix[i][j] = dist(gen);
+            }
+        }
+    }
+    std::cout << "\n Матрица смежности" << std::endl;
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            std::cout << costMatrix[i][j] << "\t";
+        }
+        std::cout << std::endl;
+    }
+    
     return 0;
 }
