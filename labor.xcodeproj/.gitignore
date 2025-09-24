@@ -1,50 +1,8 @@
-<<<<<<< HEAD
-# Prerequisites
-*.d
-
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Linker files
-*.ilk
-
-# Debugger Files
-*.pdb
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-=======
 # Игнорировать исполняемые файлы (то, что получается после компиляции)
->>>>>>> af0bde1a4589f09266f8125a4ef77a63af24e2e7
 *.exe
 *.out
 *.app
 
-<<<<<<< HEAD
-# debug information files
-*.dwo
-=======
 # Игнорировать объектные файлы и файлы библиотек (промежуточные этапы компиляции)
 *.o
 *.obj
@@ -89,4 +47,3 @@ x86/
 # Игнорировать файлы операционной системы (актуально для macOS)
 .DS_Store
 
->>>>>>> af0bde1a4589f09266f8125a4ef77a63af24e2e7
