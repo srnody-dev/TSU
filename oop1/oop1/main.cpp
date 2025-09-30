@@ -61,7 +61,34 @@ public: //1) конструкторы: по умолчанию, с аргуме�
     bool isPerpendicular() const {
         return b == 0;
     }
-};
+    
+    //6) нахождение углового коэффициента прямой;
+    
+    //k = -a/b
+    
+    void printSlopeInfo() const {
+        if (b == 0) {
+            std::cout << "Прямая вертикальная и угловой коэффициент не существует" << std::endl;
+        } else {
+            std::cout << "Угловой коэффициент: " << (-a / b) << std::endl;
+        }
+    }
+
+        //7) проверка параллельности двух прямых (через операцию ||);
+    
+    //a1*b2=a2*b1
+        bool operator||(const Line& other) const {
+            return (a * other.b == other.a * b);
+        }
+
+        //8) проверка перпендикулярности двух прямых;
+    //a1*a2+b1*b2=0
+        bool isPerpendicularTo(const Line& other) const {
+            return (a * other.a + b * other.b == 0);
+        }
+}
+
+;
 
 void testLineClass() {
     
@@ -70,7 +97,18 @@ void testLineClass() {
     std::cout << "Прямая: "; testLine.output();
     std::cout << "Проходит через начало координат(0,0): " << (testLine.isStart() ? "да" : "нет") << std::endl;
     std::cout << "Перпендикулярна Ox: " << (testLine.isPerpendicular() ? "да" : "нет") << std::endl;
-}
+    
+    testLine.printSlopeInfo();
+
+      std::cout << "\nВведите коэффициенты второй прямой для сравнения:" << std::endl;
+      Line testLine2;
+      testLine2.input();
+      std::cout << "Вторая прямая: "; testLine2.output();
+    
+      std::cout << "Прямые параллельны: " << (testLine || testLine2 ? "да" : "нет") << std::endl;
+
+      std::cout << "Прямые перпендикулярны: " << (testLine.isPerpendicularTo(testLine2) ? "да" : "нет") << std::endl;
+  }
 
 int main() {
     testLineClass();
