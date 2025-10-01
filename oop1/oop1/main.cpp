@@ -13,25 +13,26 @@ private:
     
     public: //1) конструкторы: по умолчанию, с аргументами (или с аргументами по умолчанию);
     Line() : a(0), b(1), c(0) {}
-    
-    Line(double a_val, double b_val, double c_val) : a(a_val), b(b_val), c(c_val) {
         
-    }
+        Line(double a_val, double b_val, double c_val) : a(a_val), b(b_val), c(c_val) {
+            
+        }
     
     //2) ввод/вывод уравнения прямой;
     void input() {
+        double aInput,bInput,cInput;
         std::cout << "Введите коэффициенты a, b, c уравнения ax + by + c = 0: ";
-        std::cin >> a >> b >> c;
-        if (a == 0 && b == 0) { //сheck на прямую
-            a = 0;
-            b = 1;
-            c = 0;
-        }
+        std::cin >> aInput >> bInput >> cInput;
+        
+        
+        setA(aInput);
+        setB(bInput);
+        setC(cInput);
         
     }
     
     void output() const {
-        cout << a << "x + " << b << "y + " << c << " = 0" << endl;
+        cout << getA() << "x + " << getB() << "y + " << getC() << " = 0" << endl;
     }
     
     
@@ -56,11 +57,11 @@ private:
     
     //4) проверка, проходит ли прямая через начало координат;
     bool isStart() const {
-        return c == 0;
+        return getC() == 0;
     }
     //5) проверка, перпендикулярна ли прямая оси Ox;
     bool isPerpendicular() const {
-        return b == 0;
+        return getB() == 0;
     }
     
     //6) нахождение углового коэффициента прямой;
@@ -68,39 +69,39 @@ private:
     //k = -a/b
     
     void printSlopeInfo() const {
-        if (b == 0) {
+        if (getB() == 0) {
             cout << "Прямая вертикальная и угловой коэффициент не существует т.к b=0" << endl;
         } else {
-            cout << "Угловой коэффициент: " << (-a / b) << endl;
+            cout << "Угловой коэффициент: " << (-getA() / getB()) << endl;
         }
     }
     
     //7) проверка параллельности двух прямых (через операцию ||);
     
     //a1*b2=a2*b1
-    bool operator||(const Line& other) const {
-        return (a * other.b == other.a * b);
+    bool operator || (const Line& other) const {
+        return (getA() * other.getB() == other.getA() * getB());
     }
     
     //8) проверка перпендикулярности двух прямых;
     //a1*a2+b1*b2=0
     bool isPerpendicularTo(const Line& other) const {
-        return (a * other.a + b * other.b == 0);
+        return (getA() * other.getA() + getB() * other.getB() == 0);
     }
     
     
     //9) нахождение расстояния от начала координат до прямой;
     // d=|c|/(sqrt(a^2 +b^2)
     double distance() const{
-        return (abs(c)/
-                sqrt((a*a) + (b*b))
+        return (abs(getC())/
+                sqrt((getA()*getA()) + (getB()*getB()))
                 );
     }
     
     //10) проверка принадлежности точки прямой;
     
     bool belongs(double x0, double y0) const {
-        return abs(a * x0 + b * y0 + c) < 1e-9;
+        return abs(getA() * x0 + getB() * y0 + getC()) < 1e-9;
     }
     
     
@@ -110,8 +111,8 @@ private:
     
     
     double spiceCornerTo(const Line& other) const{
-        double numerator = abs(a * other.a + b * other.b);
-        double denominator = sqrt(a * a + b * b) * sqrt(other.a * other.a + other.b * other.b);
+        double numerator = abs(getA() * other.getA() + getB() * other.getB());
+        double denominator = sqrt(getA() * getA() + getB() * getB()) * sqrt(other.getA() * other.getA() + other.getB() * other.getB());
         double cosCorner = numerator / denominator;
         double cornerRad = acos(cosCorner);
         return cornerRad;
@@ -143,9 +144,9 @@ private:
         cout << "Расстояние от начала координат до прямой: " << testLine.distance() << endl;
         
         double x0, y0;
-        cout << "Введите координаты точки (x0, y0) для проверки принадлежности точки: ";
+        cout << "Введите координаты точки (x0, y0) для проверки принадлежности точки для прямой 1 : ";
         cin >> x0 >> y0;
-        cout << "Точка (" << x0 << "," << y0 << ") принадлежит прямой: "
+        cout << "Точка (" << x0 << "," << y0 << ") принадлежит прямой 1 : "
         << (testLine.belongs(x0,y0) ? "да" : "нет") << endl;
         
         if (!(testLine || testLine2)) {
