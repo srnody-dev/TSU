@@ -24,7 +24,7 @@ private:
         std::cout << "Введите коэффициенты a, b, c уравнения ax + by + c = 0: ";
         std::cin >> aInput >> bInput >> cInput;
         
-        
+    
         setA(aInput);
         setB(bInput);
         setC(cInput);
