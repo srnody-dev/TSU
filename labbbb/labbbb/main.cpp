@@ -1,122 +1,208 @@
 #include <iostream>
-#include <vector>
 #include <random>
+#include <chrono>
 #include <climits>
+#include <iomanip>
 
-void findOptimalRoute(int currentCity, int count, int cost,
-                  std::vector<bool>& visited,
-                  std::vector<int>& currentPath,
-                  std::vector<int>& bestPath, int& bestCost,
-                  const std::vector<std::vector<int>>& matrix) {
-    auto n = matrix.size();
+using namespace std;
+
+void printRoad(int route[], int size) {
+    for (int i = 0; i < size; ++i) {
+        cout << route[i];
+        if (i < size - 1) {
+            cout << " -> ";
+        }
+    }
+}
+
+void findAccuracyRoute(int currentCity, int count, int cost,
+                  bool visited[], int currentRoute[],
+                  int bestRoute[], int& bestCost,
+                  int worstRoute[], int& worstCost,
+                  int** matrix, int n) {
     
-
     if (count == n) {
-        cost += matrix[currentCity][0];
-        if (cost < bestCost) {
-            bestCost = cost;
-            bestPath = currentPath;
-            
+        int finalCost = cost + matrix[currentCity][0];
+        
+        if (finalCost < bestCost) {
+            bestCost = finalCost;
+            for (int i = 0; i < n; i++) {
+                bestRoute[i] = currentRoute[i];
+            }
+        }
+        
+        if (finalCost > worstCost) {
+            worstCost = finalCost;
+            for (int i = 0; i < n; i++) {
+                worstRoute[i] = currentRoute[i];
+            }
         }
         return;
     }
     
-
     for (int nextCity = 0; nextCity < n; nextCity++) {
         if (!visited[nextCity]) {
             visited[nextCity] = true;
-            currentPath[count] = nextCity;
+            currentRoute[count] = nextCity;
             
-            findOptimalRoute(nextCity, count + 1, cost + matrix[currentCity][nextCity],
-                         visited, currentPath, bestPath, bestCost, matrix);
+            findAccuracyRoute(nextCity, count + 1, cost + matrix[currentCity][nextCity],
+                         visited, currentRoute, bestRoute, bestCost, worstRoute, worstCost, matrix, n);
             
             visited[nextCity] = false;
         }
     }
 }
 
-std::pair<std::vector<int>, int> calculateOptimalRoute(int startCity, const std::vector<std::vector<int>>& matrix) {
-    auto n = matrix.size();
-    
-    if (n <= 1) {
-        return {{startCity}, 0};
+int** createMatrix(int n) {
+    int** matrix = new int*[n];
+    for (int i = 0; i < n; i++) {
+        matrix[i] = new int[n];
     }
-
-    std::vector<bool> visited(n, false);
-    std::vector<int> currentPath(n);
-    std::vector<int> bestPath;
-    int bestCost = INT_MAX;
-    
-    visited[startCity] = true;
-    currentPath[0] = startCity;
-    
-    findOptimalRoute(startCity, 1, 0, visited, currentPath, bestPath, bestCost, matrix);
-    
-    /*
-    
-    std::vector<int> fullBestPath = bestPath;
-    fullBestPath.push_back(startCity);
-    
-    return {fullBestPath, bestCost};*/
-    
-    //проверь будет ли так быстрей без создания копий
-    
-    bestPath.push_back(startCity);
-    return {bestPath, bestCost};
+    return matrix;
 }
 
-void printRoad(const std::vector<int>& path) {
-    for (size_t i = 0; i < path.size(); ++i) {
-        std::cout << path[i];
-        if (i < path.size() - 1) {
-            std::cout << " -> ";
-        }
+void deleteMatrix(int** matrix, int n) {
+    for (int i = 0; i < n; i++) {
+        delete[] matrix[i];
     }
+    delete[] matrix;
 }
 
-int main() {
-    int n;
-    std::cout << "Введите количество городов: ";
-    std::cin >> n;
-
-
-    std::vector<std::vector<int>> costMatrix(n, std::vector<int>(n, 0));
+int** generateCostMatrix(int n, int minCost, int maxCost) {
+    int** matrix = createMatrix(n);
     
-    int minCost, maxCost;
-    std::cout << "Введите минимальную стоимость маршрута: ";
-    std::cin >> minCost;
-    std::cout << "Введите максимальную стоимость маршрута: ";
-    std::cin >> maxCost;
-
-    std::random_device rd;
-    std::mt19937_64 gen(rd());
-    std::uniform_int_distribution<int> dist(minCost, maxCost);
+    random_device randomDevice;
+    mt19937_64 generator(randomDevice());
+    uniform_int_distribution<int> dist(minCost, maxCost);
     
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
             if (i == j) {
-                costMatrix[i][j] = 0;
+                matrix[i][j] = 0;
             } else {
-                costMatrix[i][j] = dist(gen);
+                matrix[i][j] = dist(generator);
             }
         }
     }
+    
+    return matrix;
+}
 
-    std::cout << "\nМатрица смежности:" << std::endl;
+void printMatrix(int** matrix, int n) {
+    cout << "\nСгенерированная матрица стоимостей:" << endl;
+    
+    cout << "   \t";
     for (int i = 0; i < n; i++) {
+        cout << i << "\t";
+    }
+    cout << endl;
+    
+    for (int i = 0; i < n; i++) {
+        cout << i << " |\t";
         for (int j = 0; j < n; j++) {
-            std::cout << costMatrix[i][j] << "\t";
+            if (i == j) {
+                cout << "0\t";
+            } else {
+                cout << matrix[i][j] << "\t";
+            }
         }
-        std::cout << std::endl;
+        cout << endl;
+    }
+}
+
+void runAndPrintExperiment(int matrixSize, int costMin, int costMax) {
+    int** matrix = generateCostMatrix(matrixSize, costMin, costMax);
+    
+    cout << "\nМатрица размером " << matrixSize << "на" << matrixSize << endl;
+    cout << "Диапазон стоимостей от " << costMin << " до " << costMax << endl;
+    
+    printMatrix(matrix, matrixSize);
+    
+    int* bestRoute = new int[matrixSize + 1];
+    int* worstRoute = new int[matrixSize + 1];
+    int* currentRoute = new int[matrixSize];
+    bool* visited = new bool[matrixSize];
+    
+    for (int i = 0; i < matrixSize; i++) {
+        visited[i] = false;
+        bestRoute[i] = -1;
+        worstRoute[i] = -1;
+        currentRoute[i] = -1;
+    
     }
     
-
-    auto result = calculateOptimalRoute(0, costMatrix);
+    bestRoute[matrixSize] = -1;
+    worstRoute[matrixSize] = -1;
     
-    std::cout << "Оптимальный путь: ";
-    printRoad(result.first);
-    std::cout << "\nМинимальная стоимость: " << result.second << std::endl;
     
+    visited[0] = true;
+    currentRoute[0] = 0;
+    
+    int bestCost = INT_MAX;
+    int worstCost = 0;
+    
+    auto start = chrono::high_resolution_clock::now();
+    
+    findAccuracyRoute(0, 1, 0, visited, currentRoute, bestRoute, bestCost, worstRoute, worstCost, matrix, matrixSize);
+    
+        if (bestCost != INT_MAX) {
+            bestRoute[matrixSize] = 0;
+        }
+        if (worstCost > 0) {
+            worstRoute[matrixSize] = 0;
+        }
+    
+    auto end = chrono::high_resolution_clock::now();
+    auto exactTime = chrono::duration<double>(end - start);
+    double exactSeconds = exactTime.count();
+    
+    cout << "Точный алгоритм - лучший маршрут: " << bestCost << " Время: "<< fixed << setprecision(6) << exactSeconds << " cек" << endl;
+    cout << "Точный алгоритм - худший маршрут: " << worstCost << endl;
+    
+    cout << "\nЛучший путь (точный): ";
+    printRoad(bestRoute, matrixSize + 1);
+    cout << "\nХудший путь (точный): ";
+    printRoad(worstRoute, matrixSize + 1);
+    cout << "\n" << endl;
+    
+    deleteMatrix(matrix, matrixSize);
+    delete[] bestRoute;
+    delete[] worstRoute;
+    delete[] currentRoute;
+    delete[] visited;
+}
 
+int main() {
+    
+    int matrixSize;
+    int costMin, costMax;
+    
+    cout << "\nВведите количество городов (размер матрицы): ";
+    cin >> matrixSize;
+    
+    if (matrixSize < 2) {
+            cout << "Ошибка: количество городов должно быть >= 2 " << endl;
+            return 1;
+        }
+        
+    cout << "Введите минимальную стоимость маршрута: ";
+    cin >> costMin;
+    
+    cout << "Введите максимальную стоимость маршрута: ";
+    cin >> costMax;
+    
+    if (costMin < 0 || costMax <= costMin) {
+        cout << "Ошибка: минимальная стоимость должна быть >= 0, а максимальная > минимальной!" << endl;
+        return 1;
+    }
+    
+    if (matrixSize > 11) {
+        cout << "\nДля матрицы размером " << matrixSize << "x" << matrixSize
+             << " точный алгоритм может работать долго" << endl;
+    }
+    
+    runAndPrintExperiment(matrixSize, costMin, costMax);
+    
     return 0;
 }
+
