@@ -1,0 +1,71 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		OBJ_5 /* main.cpp */ = {isa = PBXBuildFile; fileRef = OBJ_6 /* main.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		OBJ_6 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		OBJ_9 /* asd3 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = asd3; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		OBJ_10 = {
+			isa = PBXGroup;
+			children = (
+				OBJ_11 /* asd3 */,
+			);
+			sourceTree = "<group>";
+		};
+		OBJ_11 /* asd3 */ = {
+			isa = PBXGroup;
+			children = (
+				OBJ_6 /* main.cpp */,
+			);
+			name = asd3;
+			path = asd3;
+			sourceTree = SOURCE_ROOT;
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		OBJ_12 /* asd3 */ = {
+			isa = PBXNativeTarget;
+			buildPhases = (
+				OBJ_13 /* Sources */,
+			);
+			buildRules = (
+			);
+			name = asd3;
+			productName = asd3;
+			productReference = OBJ_9 /* asd3 */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		OBJ_1 /* Project object */ = {
+			isa = PBXProject;
+			targets = (
+				OBJ_12 /* asd3 */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		OBJ_13 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+				OBJ_5 /* main.cpp */,
+			);
+		};
+/* End PBXSourcesBuildPhase section */
+	};
+	rootObject = OBJ_1 /* Project object */;
+}
