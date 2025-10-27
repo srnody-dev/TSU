@@ -5,11 +5,22 @@
 //  Created by srnody on 22.10.2025.
 //
 
-#include <iostream>
+#include <cmath>
+#include <stdio.h>
+#include <stdlib.h>
 #include <random>
+#include <unistd.h>
 
-using namespace std;
+const int test_Arrays = 9;
 
+struct TestArray {
+    int* data;
+    int size;
+    char filename[100];
+};
+
+TestArray testArrays[test_Arrays];
+int testArraysCount = 0;
 
 void intervalShellSort(int arr[], int n, int interval) {
     for (int i = interval; i < n; i++) {
@@ -23,6 +34,7 @@ void intervalShellSort(int arr[], int n, int interval) {
 }
 
 // Сортировка Шелла с оригинальным интервалом n/2
+//O(n2)
 void OriginalSort(int arr[], int n) {
     for (int interval = n/2; interval > 0; interval = interval / 2) {
         intervalShellSort(arr, n, interval);
@@ -30,6 +42,7 @@ void OriginalSort(int arr[], int n) {
 }
 
 // Сортировка Шелла с последовательностью Хиббарда
+//O(n^(1,5))
 void HibbardSort(int arr[], int n) {
     // интервал 2^k - 1
     int k = 1;
@@ -44,8 +57,8 @@ void HibbardSort(int arr[], int n) {
         k--;
     }
 }
-
 // Сортировка Шелла с последовательностью Седжвика
+//O(n^(4/3))
 void SedgewickSort(int arr[], int n) {
     int intervals[100];
     int intervalsCount = 0;
@@ -55,9 +68,9 @@ void SedgewickSort(int arr[], int n) {
     while (true) {
         int interval;
         if (i % 2 == 0) {
-            interval = 9 * (pow(2, i) - pow(2, i/2)) + 1;
+            interval = 9 * (1 << i) - 9 * (1 << (i/2)) + 1;
         } else {
-            interval = 8 * pow(2, i) - 6 * pow(2, (i+1)/2) + 1;
+            interval = 8 * (1 << i) - 6 * (1 << ((i+1)/2)) + 1;
         }
         
         if (interval > n) break;
@@ -71,6 +84,7 @@ void SedgewickSort(int arr[], int n) {
 }
 
 //Сортировка Шелла с последовательностью Циура
+//O(n (log n)^2).
 void CiuraSort(int arr[], int n) {
     int intervals[50];
     int intervalCount = 0;
@@ -91,12 +105,14 @@ void CiuraSort(int arr[], int n) {
     }
 }
 
-inline void printArray(const int arr[], int n) {
+inline void printArray(int arr[], int n, const char* label) {
+    printf("%s: ", label);
     for (int i = 0; i < n; i++) {
-        cout << arr[i] << " ";
+        printf("%d ", arr[i]);
     }
-    cout << endl;
+    printf("\n");
 }
+
 inline bool isSorted(const int arr[], int n) {
     for (int i = 0; i < n - 1; i++) {
         if (arr[i] > arr[i + 1]) {
@@ -107,56 +123,224 @@ inline bool isSorted(const int arr[], int n) {
 }
 
 void randomArray(int arr[], int n, int minValue, int maxValue) {
-    random_device randomDevice;
-    mt19937 generator(randomDevice());
-    uniform_int_distribution<int> dist(minValue, maxValue);
+    std::random_device randomDevice;
+    std::mt19937 generator(randomDevice());
+    std::uniform_int_distribution<int> dist(minValue, maxValue);
     
     for (int i = 0; i < n; i++) {
         arr[i] = dist(generator);
     }
 }
-void testSorts() {
-    const int sizeArray = 100000000;
-        int* arr = new int[sizeArray];
+
+int loadArrayFromFile(int arr[], const char* filename) {
+    FILE* file = fopen(filename, "r");
+    if (file == NULL) {
+        printf("Ошибка открытия файла %s\n", filename);
+        return 0;
+    }
     
-    cout << "Тест сортировок Шелла с различным шагом" << endl;
-    // Тест Хиббарда
-    randomArray(arr, sizeArray, -999999, 999999);
-    clock_t start = clock();
-    HibbardSort(arr, sizeArray);
-    clock_t end = clock();
-    double duration = double(end - start) / CLOCKS_PER_SEC;
-    cout << "Хиббард: " << duration << " мкс" << endl;
+    int n;
+    fscanf(file, "%d", &n);
+    
+    for (int i = 0; i < n; i++) {
+        fscanf(file, "%d", &arr[i]);
+    }
+    
+    fclose(file);
+    return n;
+}
+
+void loadAllTestArrays() {
+    int sizes[] = {10000, 100000, 1000000};
+    const char* rangeNames[] = {"-10_10", "-1000_1000", "-100000_100000"};
+    
+    testArraysCount = 0;
+    
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            if (testArraysCount >= test_Arrays) break;
+            
+            char filename[100];
+            snprintf(filename, sizeof(filename),
+                    "testArray_size_%d_range_%s.txt", sizes[i], rangeNames[j]);
+            
+            FILE* file = fopen(filename, "r");
+            if (file == NULL) {
+                printf("Файл %s не найден, пропускаем\n", filename);
+                continue;
+            }
+            fclose(file);
+            
+            int* arr = (int*)malloc(sizes[i] * sizeof(int));
+            if (arr == NULL) {
+                printf("Ошибка памяти для %s\n", filename);
+                continue;
+            }
+            
+            int n = loadArrayFromFile(arr, filename);
+            if (n > 0) {
+                testArrays[testArraysCount].data = arr;
+                testArrays[testArraysCount].size = n;
+                strcpy(testArrays[testArraysCount].filename, filename);
+                testArraysCount++;
+            } else {
+                free(arr);
+            }
+        }
+    }
+}
+
+void copyArray(int copy[], int original[], int n) {
+    for (int i = 0; i < n; i++) {
+        copy[i] = original[i];
+    }
+}
+
+void testSorting(const TestArray* testArray, int runs) {
+    printf("Тест: %s (%d элементов)\n", testArray->filename, testArray->size);
+    
+    double totalOriginal = 0, totalHibbard = 0, totalSedgewick = 0, totalCiura = 0;
+    bool totalOriginalCorrect = true, totalHibbardCorrect = true, totalSedgewickCorrect = true, totalCiuraCorrect = true;
+    
+    // Оригинальная
+    for (int i = 0; i < runs; i++) {
+        int* arr = (int*)malloc(testArray->size * sizeof(int));
+        if (arr == NULL) {
+            printf("Ошибка памяти для теста\n");
+            continue;
+        }
         
-    // Тест оригинальной
-    randomArray(arr, sizeArray, -999999, 999999);
-    start = clock();
-    OriginalSort(arr, sizeArray);
-    end = clock();
-    duration = double(end - start) / CLOCKS_PER_SEC;
-    cout << "Оригинальная: " << duration << " мкс" << endl;
+        copyArray(arr, testArray->data, testArray->size);
         
-    // Тест Седжвика
-    randomArray(arr, sizeArray, -999999, 999999);
-    start = clock();
-    SedgewickSort(arr, sizeArray);
-    end = clock();
-    duration = double(end - start) / CLOCKS_PER_SEC;
-    cout << "Седжвик: " << duration << " мкс" << endl;
+        clock_t start = clock();
+        OriginalSort(arr, testArray->size);
+        clock_t end = clock();
+        
+        totalOriginal += ((double)(end - start)) / CLOCKS_PER_SEC;
+        
+        if (!isSorted(arr, testArray->size)) {
+            totalOriginalCorrect = false;
+            printf("Ошибка: массив Оригинальной не отсортирован!\n");
+        }
+        
+        free(arr);
+    }
     
-    // Тест Циура
-    randomArray(arr, sizeArray, -999999, 999999);
-    start = clock();
-    CiuraSort(arr, sizeArray);
-    end = clock();
-    duration = double(end - start) / CLOCKS_PER_SEC;
-    cout << "Циур: " << duration << " мкс" << endl;
+    // Хиббард
+    for (int i = 0; i < runs; i++) {
+        int* arr = (int*)malloc(testArray->size * sizeof(int));
+        if (arr == NULL) {
+            printf("Ошибка памяти для теста\n");
+            continue;
+        }
+        
+        copyArray(arr, testArray->data, testArray->size);
+        
+        clock_t start = clock();
+        HibbardSort(arr, testArray->size);
+        clock_t end = clock();
+        
+        totalHibbard += ((double)(end - start)) / CLOCKS_PER_SEC;
+        
+        if (!isSorted(arr, testArray->size)) {
+            totalHibbardCorrect = false;
+            printf("Ошибка: массив Хиббарда отсортирован!\n");
+        }
+        
+        free(arr);
+    }
     
-    delete[] arr;
+    // Циура
+    for (int i = 0; i < runs; i++) {
+        int* arr = (int*)malloc(testArray->size * sizeof(int));
+        if (arr == NULL) {
+            printf("Ошибка памяти для теста\n");
+            continue;
+        }
+        
+        copyArray(arr, testArray->data, testArray->size);
+        
+        clock_t start = clock();
+        CiuraSort(arr, testArray->size);
+        clock_t end = clock();
+        
+        totalCiura += ((double)(end - start)) / CLOCKS_PER_SEC;
+        
+        if (!isSorted(arr, testArray->size)) {
+            totalCiuraCorrect = false;
+            printf("Ошибка: массив Циура отсортирован!\n");
+        }
+        
+        free(arr);
+    }
+    
+    // Седжвик
+    for (int i = 0; i < runs; i++) {
+        int* arr = (int*)malloc(testArray->size * sizeof(int));
+        if (arr == NULL) {
+            printf("Ошибка памяти для теста\n");
+            continue;
+        }
+        
+        copyArray(arr, testArray->data, testArray->size);
+        
+        clock_t start = clock();
+        SedgewickSort(arr, testArray->size);
+        clock_t end = clock();
+        
+        totalSedgewick += ((double)(end - start)) / CLOCKS_PER_SEC;
+        
+        if (!isSorted(arr, testArray->size)) {
+            totalSedgewickCorrect = false;
+            printf("Ошибка: массив Седжвика отсортирован!\n");
+        }
+        
+        free(arr);
+    }
+    
+    
+    
+    double avgtotalOriginal = totalOriginal / runs;
+    double avgtotalHibbard = totalHibbard / runs;
+    double avgtotalCiura = totalCiura / runs;
+    double avgtotalSedgewick = totalSedgewick / runs;
+    
+    printf("Результаты %d запусков:\n", runs);
+    printf("Оригинальная: %.6f секунд (Отсортирован: %s)\n",
+           avgtotalOriginal, totalOriginalCorrect ? "Да" : "НЕТ!");
+    printf("Хиббарда:  %.6f секунд (Отсортирован: %s)\n",
+           avgtotalHibbard, totalHibbardCorrect ? "Да" : "НЕТ!");
+    printf("Циура: %.6f секунд (Отсортирован: %s)\n",
+           avgtotalCiura, totalCiuraCorrect ? "Да" : "НЕТ!");
+    printf("Седжвика:  %.6f секунд (Отсортирован: %s)\n",
+           avgtotalSedgewick, totalSedgewickCorrect ? "Да" : "НЕТ!");
+    printf("\n");
+    
+}
+
+void freeAllTestArrays() {
+    for (int i = 0; i < testArraysCount; i++) {
+        if (testArrays[i].data != NULL) {
+            free(testArrays[i].data);
+            testArrays[i].data = NULL;
+        }
+    }
+    testArraysCount = 0;
+}
+
+void testAllArraysOptimized() {
+    
+    loadAllTestArrays();
+    for (int i = 0; i < testArraysCount; i++) {
+        testSorting(&testArrays[i], 3);
+    }
+    freeAllTestArrays();
     
 }
 
 int main() {
-    testSorts();
-    return 0;
+    char cwd[1024];
+    getcwd(cwd, sizeof(cwd));
+    printf("Текущая директория: %s\n\n", cwd);
+    testAllArraysOptimized();
 }
