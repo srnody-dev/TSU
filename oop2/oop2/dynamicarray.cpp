@@ -29,6 +29,18 @@ DynamicArray<ItemType>::DynamicArray(int initialLength) : arrayLength_(initialLe
 }
 
 template<typename ItemType>
+DynamicArray<ItemType>::DynamicArray(const ItemType* array, int length) : arrayLength_(length)
+{
+    std::cout << "DynamicArray::DynamicArray(const ItemType*, int)" << std::endl;
+
+    arrayData_ = new ItemType[length];
+    for (int i = 0; i < length; i++)
+    {
+        arrayData_[i] = array[i];
+    }
+}
+
+template<typename ItemType>
 DynamicArray<ItemType>::DynamicArray(const DynamicArray<ItemType>& otherArray)
 {
     std::cout << "DynamicArray::DynamicArray(const DynamicArray&)" << std::endl;
@@ -230,5 +242,78 @@ DynamicArray<ItemType>& DynamicArray<ItemType>::operator+=(const DynamicArray& o
     return *this;
 }
 
+template<typename ItemType>
+void DynamicArray<ItemType>::swap(DynamicArray& other)
+{
+    ItemType* tempData = arrayData_;
+    int tempLength = arrayLength_;
+
+    arrayData_ = other.arrayData_;
+    arrayLength_ = other.arrayLength_;
+
+    other.arrayData_ = tempData;
+    other.arrayLength_ = tempLength;
+}
+
+template<typename ItemType>
+int DynamicArray<ItemType>::find(const ItemType& value) const
+{
+    for (int i = 0; i < arrayLength_; i++)
+    {
+        if (arrayData_[i] == value)
+            return i;
+    }
+    return -1;
+}
+template<typename ItemType>
+void DynamicArray<ItemType>::sort()
+{
+    if (arrayLength_ <= 1)
+        return;
+
+    for (int interval = arrayLength_ / 2; interval > 0; interval = interval / 2)
+    {
+        for (int i = interval; i < arrayLength_; i++)
+        {
+            ItemType temp = arrayData_[i];
+            int j;
+            
+            for (j = i; j >= interval && arrayData_[j - interval] > temp; j -= interval)
+            {
+                arrayData_[j] = arrayData_[j - interval];
+            }
+            arrayData_[j] = temp;
+        }
+    }
+}
+
+template<typename ItemType>
+bool DynamicArray<ItemType>::removeByValue(const ItemType& value)
+{
+    int index = find(value);
+    if (index == -1)
+        return false;
+    
+    return removeAt(index);
+}
+
+template<typename ItemType>
+int DynamicArray<ItemType>::removeAllByValue(const ItemType& value)
+{
+    int count = 0;
+    for (int i = 0; i < arrayLength_; i++)
+    {
+        if (arrayData_[i] == value)
+        {
+            removeAt(i);
+            i--;
+            count++;
+        }
+    }
+    return count;
+}
+
 
 template class DynamicArray<int>;
+template class DynamicArray<double>;
+template class DynamicArray<float>;

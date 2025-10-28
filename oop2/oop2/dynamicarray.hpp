@@ -45,6 +45,11 @@ public:
     bool insertAt(const int index, const ItemType& value);
     bool removeAt(const int index);
     void print() const;
+    void swap(DynamicArray& other);
+    int find(const ItemType& value) const;
+    void sort();
+    bool removeByValue(const ItemType& value);
+    int removeAllByValue(const ItemType& value); 
 
 
 private:
