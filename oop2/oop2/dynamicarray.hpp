@@ -16,6 +16,7 @@ class DynamicArray
 public:
     DynamicArray();
     DynamicArray(int initialLength);
+    DynamicArray(const ItemType* array, int length);
     DynamicArray(const DynamicArray& otherArray);
     DynamicArray(DynamicArray&& otherArray);
     ~DynamicArray();
@@ -34,13 +35,17 @@ public:
         assert((index >= 0 && index < arrayLength_) && "Index is out of range.");
         return arrayData_[index];
     }
+    
+    bool operator==(const DynamicArray& other) const;
+    bool operator!=(const DynamicArray& other) const;
+    DynamicArray operator+(const DynamicArray& other) const;
+    DynamicArray& operator+=(const DynamicArray& other);
 
     int getLength() const { return arrayLength_; }
     bool insertAt(const int index, const ItemType& value);
     bool removeAt(const int index);
     void print() const;
 
-    ItemType* getData() const { return arrayData_; }
 
 private:
     ItemType* arrayData_;

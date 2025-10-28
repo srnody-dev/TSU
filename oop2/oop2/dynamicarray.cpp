@@ -190,4 +190,45 @@ void DynamicArray<ItemType>::print() const
     std::cout << "]" << std::endl;
 }
 
+template<typename ItemType>
+bool DynamicArray<ItemType>::operator==(const DynamicArray& other) const
+{
+    if (arrayLength_ != other.arrayLength_)
+        return false;
+
+    for (int i = 0; i < arrayLength_; i++)
+    {
+        if (arrayData_[i] != other.arrayData_[i])
+            return false;
+    }
+    return true;
+}
+
+template<typename ItemType>
+bool DynamicArray<ItemType>::operator!=(const DynamicArray& other) const
+{
+    return !(*this == other);
+}
+
+template<typename ItemType>
+DynamicArray<ItemType> DynamicArray<ItemType>::operator+(const DynamicArray& other) const
+{
+    DynamicArray<ItemType> result(arrayLength_ + other.arrayLength_);
+    
+    for (int i = 0; i < arrayLength_; i++)
+        result[i] = arrayData_[i];
+    
+    for (int i = 0; i < other.arrayLength_; i++)
+        result[arrayLength_ + i] = other.arrayData_[i];
+    
+    return result;
+}
+template<typename ItemType>
+DynamicArray<ItemType>& DynamicArray<ItemType>::operator+=(const DynamicArray& other)
+{
+    *this = *this + other;
+    return *this;
+}
+
+
 template class DynamicArray<int>;
