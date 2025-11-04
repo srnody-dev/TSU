@@ -141,3 +141,113 @@ uint32_t BooleanVector::getNumBytes() const
     if (numBits_ % 8 > 0) numBytes += 1;
     return numBytes;
 }
+
+void BooleanVector::set0(const uint32_t index)
+{
+    if (index >= numBits_)
+        throw std::runtime_error("Index out of bounds");
+    
+    uint32_t byteIndex = index / (8 * sizeof(uint8_t));
+    uint32_t bitIndex = index % (8 * sizeof(uint8_t));
+    vectorData_[byteIndex] &= ~(1 << bitIndex);
+}
+
+void BooleanVector::set1(const uint32_t index)
+{
+    if (index >= numBits_)
+        throw std::runtime_error("Index out of bounds");
+    
+    uint32_t byteIndex = index / (8 * sizeof(uint8_t));
+    uint32_t bitIndex = index % (8 * sizeof(uint8_t));
+    vectorData_[byteIndex] |= (1 << bitIndex);
+}
+
+BooleanVector& BooleanVector::operator=(const BooleanVector& other)
+{
+    if (this != &other)
+    {
+        delete[] vectorData_;
+        
+        numBits_ = other.numBits_;
+        if (numBits_ == 0)
+        {
+            vectorData_ = nullptr;
+        }
+        else
+        {
+            uint32_t numBytes = getNumBytes();
+            vectorData_ = new uint8_t[numBytes];
+            memcpy(vectorData_, other.vectorData_, numBytes);
+        }
+    }
+    return *this;
+}
+BooleanVector BooleanVector::operator&(const BooleanVector& other) const
+{
+    if (numBits_ != other.numBits_)
+        throw std::runtime_error("Vectors must have same length for bitwise operations");
+    
+    BooleanVector result(numBits_);
+    uint32_t numBytes = getNumBytes();
+    
+    for (uint32_t byteIndex = 0; byteIndex < numBytes; byteIndex++)
+    {
+        result.vectorData_[byteIndex] = vectorData_[byteIndex] & other.vectorData_[byteIndex];
+    }
+    
+    return result;
+}
+BooleanVector BooleanVector::operator|(const BooleanVector& other) const
+{
+    if (numBits_ != other.numBits_)
+        throw std::runtime_error("Vectors must have same length for bitwise operations");
+    
+    BooleanVector result(numBits_);
+    uint32_t numBytes = getNumBytes();
+    
+    for (uint32_t byteIndex = 0; byteIndex < numBytes; byteIndex++)
+    {
+        result.vectorData_[byteIndex] = vectorData_[byteIndex] | other.vectorData_[byteIndex];
+    }
+    
+    return result;
+}
+
+BooleanVector BooleanVector::operator~() const
+{
+    BooleanVector result(*this);
+    result.invert();
+    return result;
+}
+
+BooleanVector& BooleanVector::operator&=(const BooleanVector& other)
+{
+    *this = *this & other;
+    return *this;
+}
+
+BooleanVector& BooleanVector::operator|=(const BooleanVector& other)
+{
+    *this = *this | other;
+    return *this;
+}
+
+std::ostream& operator<<(std::ostream& os, const BooleanVector& vec)
+{
+    for (uint32_t i = 0; i < vec.numBits_; i++)
+    {
+        os << (vec[i] ? '1' : '0');
+    }
+    return os;
+}
+
+std::istream& operator>>(std::istream& is, BooleanVector& vec)
+{
+    std::string str;
+    is >> str;
+    
+    BooleanVector temp(str.c_str());
+    vec = temp;
+    
+    return is;
+}

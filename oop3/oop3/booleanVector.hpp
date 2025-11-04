@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <iostream>
 #include <stdint.h>
 
 class BooleanVector
@@ -28,8 +29,20 @@ public:
     
     void invert();
     void invert(const uint32_t index);
+    void set0(const uint32_t index); 
+    void set1(const uint32_t index);
     
     BitReference operator[](const uint32_t index) const;
+    BooleanVector operator~() const;
+    BooleanVector& operator=(const BooleanVector& other);
+    BooleanVector operator&(const BooleanVector& other) const;
+    BooleanVector& operator&=(const BooleanVector& other);
+    BooleanVector operator|(const BooleanVector& other) const; 
+    BooleanVector& operator|=(const BooleanVector& other);
+    
+    
+    friend std::ostream& operator<<(std::ostream& os, const BooleanVector& vec);
+    friend std::istream& operator>>(std::istream& is, BooleanVector& vec);
 
 private:
     class BitReference
