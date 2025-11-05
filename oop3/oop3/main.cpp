@@ -54,6 +54,12 @@ int main()
     std::cout << "a & b: " << (a & b) << std::endl;
     std::cout << "a | b: " << (a | b) << std::endl;
     std::cout << "~a: " << (~a) << std::endl;
+    
+    
+    std::cout << "\nТест XOR операций" << std::endl;
+    std::cout << "a ^ b: " << (a ^ b) << std::endl;
+    a ^= b;
+    std::cout << "a после ^= b: " << a << std::endl;
 
     
     std::cout << "\nТест составных операций" << std::endl;
@@ -69,7 +75,6 @@ int main()
     d = b;
     std::cout << "d после = b: " << d << std::endl;
 
-    // Тест swap
     std::cout << "\nТест swap" << std::endl;
     BooleanVector x("11110000");
     BooleanVector y("00001111");
@@ -164,11 +169,28 @@ int main()
     std::cout << "\nТест swap" << std::endl;
     BooleanVector user6 = user1;
     BooleanVector user7 = user2;
+    
+    std::cout << "\nТест XOR операций" << std::endl;
+    std::cout << "user1 ^ user2: " << (user1 ^ user2) << std::endl;
+    user1 ^= user2;
+    std::cout << "a после ^= b: " << user1 << std::endl;
         
     std::cout << "До swap user6: " << user6 << " user7: " << user7 << std::endl;
     user6.swap(user7);
     std::cout << "После swap user6: " << user6 << " user7: " << user7 << std::endl;
-
+    
+    
+    std::cout << "\nТест битовых сдвигов" << std::endl;
+    BooleanVector user8("11011010");
+    std::cout << "Исходный: " << user8 << std::endl;
+    std::cout << "ser8 << 2: " << (user8 << 2) << std::endl;
+    std::cout << "ser8 >> 2: " << (user8 >> 2) << std::endl;
+    BooleanVector user9 = user8;
+    user9 <<= 1;
+    std::cout << "После <<= 1: " << user9 << std::endl;
+    user9 = user8;
+    user9 >>= 1;
+    std::cout << "После >>= 1: " << user9 << std::endl;
 
     return 0;
 }

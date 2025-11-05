@@ -17,11 +17,7 @@ BooleanVector::BooleanVector(const uint32_t numBits, const bool initialValue)
 {
     if (numBits == 0) return;
     
-    uint32_t numBytes = numBits / (8 * sizeof(uint8_t));
-    if (numBits % (8 * sizeof(uint8_t)) > 0)
-    {
-        numBytes += 1;
-    }
+    uint32_t numBytes = getNumBytes();
 
     vectorData_ = new uint8_t[numBytes];
     uint8_t localInitialValue = initialValue ? 255 : 0;
@@ -62,7 +58,9 @@ BooleanVector::BooleanVector(const BooleanVector& other) : numBits_(other.numBit
     
     uint32_t numBytes = getNumBytes();
     vectorData_ = new uint8_t[numBytes];
-    memcpy(vectorData_, other.vectorData_, numBytes);
+    for (uint32_t i = 0; i < numBytes; i++)
+        vectorData_[i] = other.vectorData_[i];
+        
 }
 
 BooleanVector::~BooleanVector()
@@ -137,8 +135,8 @@ BooleanVector::BitReference& BooleanVector::BitReference::operator=(const bool n
 
 uint32_t BooleanVector::getNumBytes() const
 {
-    uint32_t numBytes = numBits_ / 8;
-    if (numBits_ % 8 > 0) numBytes += 1;
+    uint32_t numBytes = numBits_ / (8 * sizeof(uint8_t));
+    if (numBits_ % (8 * sizeof(uint8_t)) > 0) numBytes += 1;
     return numBytes;
 }
 
@@ -177,7 +175,8 @@ BooleanVector& BooleanVector::operator=(const BooleanVector& other)
         {
             uint32_t numBytes = getNumBytes();
             vectorData_ = new uint8_t[numBytes];
-            memcpy(vectorData_, other.vectorData_, numBytes);
+            for (uint32_t i = 0; i < numBytes; i++)
+                vectorData_[i] = other.vectorData_[i];
         }
     }
     return *this;
@@ -185,7 +184,7 @@ BooleanVector& BooleanVector::operator=(const BooleanVector& other)
 BooleanVector BooleanVector::operator&(const BooleanVector& other) const
 {
     if (numBits_ != other.numBits_)
-        throw std::runtime_error("Vectors must have same length for bitwise operations");
+        throw std::runtime_error("Vectors must be the same length");
     
     BooleanVector result(numBits_);
     uint32_t numBytes = getNumBytes();
@@ -200,7 +199,7 @@ BooleanVector BooleanVector::operator&(const BooleanVector& other) const
 BooleanVector BooleanVector::operator|(const BooleanVector& other) const
 {
     if (numBits_ != other.numBits_)
-        throw std::runtime_error("Vectors must have same length for bitwise operations");
+        throw std::runtime_error("Vectors must be the same length");
     
     BooleanVector result(numBits_);
     uint32_t numBytes = getNumBytes();
@@ -250,4 +249,80 @@ std::istream& operator>>(std::istream& is, BooleanVector& vec)
     vec = temp;
     
     return is;
+}
+BooleanVector BooleanVector::operator^(const BooleanVector& other) const
+{
+    if (numBits_ != other.numBits_)
+        throw std::runtime_error("Vectors must have same length for bitwise operations");
+    
+    BooleanVector result(numBits_);
+    uint32_t numBytes = getNumBytes();
+    
+    for (uint32_t byteIndex = 0; byteIndex < numBytes; byteIndex++)
+    {
+        result.vectorData_[byteIndex] = vectorData_[byteIndex] ^ other.vectorData_[byteIndex];
+    }
+    
+    return result;
+}
+BooleanVector& BooleanVector::operator^=(const BooleanVector& other)
+{
+    *this = *this ^ other;
+    return *this;
+}
+BooleanVector BooleanVector::operator<<(const uint32_t shift) const
+{
+    if (shift == 0) return *this;
+    
+    BooleanVector result(numBits_);
+    
+    if (shift >= numBits_)
+    {
+        return result;
+    }
+    
+    for (uint32_t i = 0; i < numBits_ - shift; i++) {
+        if ((*this)[i]) {
+            uint32_t newIndex = i + shift;
+            uint32_t byteIndex = newIndex / 8;
+            uint32_t bitIndex = newIndex % 8;
+            result.vectorData_[byteIndex] |= (1 << bitIndex);
+        }
+    }
+    
+    return result;
+}
+
+BooleanVector BooleanVector::operator>>(const uint32_t shift) const
+{
+    if (shift == 0) return *this;
+    
+    BooleanVector result(numBits_);
+    
+    if (shift >= numBits_)
+    {
+        return result;
+    }
+    
+    for (uint32_t i = shift; i < numBits_; i++) {
+        if ((*this)[i]) {
+            uint32_t newIndex = i - shift;
+            uint32_t byteIndex = newIndex / 8;
+            uint32_t bitIndex = newIndex % 8;
+            result.vectorData_[byteIndex] |= (1 << bitIndex);
+        }
+    }
+    
+    return result;
+}
+BooleanVector& BooleanVector::operator<<=(const uint32_t shift)
+{
+    *this = *this << shift;
+    return *this;
+}
+
+BooleanVector& BooleanVector::operator>>=(const uint32_t shift)
+{
+    *this = *this >> shift;
+    return *this;
 }

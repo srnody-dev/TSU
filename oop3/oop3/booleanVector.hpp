@@ -39,6 +39,12 @@ public:
     BooleanVector& operator&=(const BooleanVector& other);
     BooleanVector operator|(const BooleanVector& other) const; 
     BooleanVector& operator|=(const BooleanVector& other);
+    BooleanVector operator^(const BooleanVector& other) const;
+    BooleanVector& operator^=(const BooleanVector& other);
+    BooleanVector operator<<(const uint32_t shift) const;
+    BooleanVector operator>>(const uint32_t shift) const;
+    BooleanVector& operator<<=(const uint32_t shift);
+    BooleanVector& operator>>=(const uint32_t shift);
     
     
     friend std::ostream& operator<<(std::ostream& os, const BooleanVector& vec);
