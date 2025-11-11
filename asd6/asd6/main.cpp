@@ -9,7 +9,7 @@
 
 using namespace std;
 
-void BitSort(int A[], int n) {
+void bitSort(int A[], int n) {
     if (n <= 1) return;
     
     const int t = sizeof(int) * 8;
@@ -42,6 +42,37 @@ void BitSort(int A[], int n) {
     delete[] A1;
 }
 
+void bitSortMix(int A[], int n) {
+    if (n <= 1) return;
+    
+    int* Aminus = new int[n];
+    int* Aplus = new int[n];
+    int Nm = 0, Np = 0;
+    
+    for (int i = 0; i < n; i++) {
+        if (A[i] < 0) {
+            Aminus[Nm] = A[i];
+            Nm++;
+        } else {
+            Aplus[Np] = A[i];
+            Np++;
+        }
+    }
+    
+    bitSort(Aminus, Nm);
+    bitSort(Aplus, Np);
+    
+    for (int i = 0; i < Nm; i++) {
+        A[i] = Aminus[i];
+    }
+    for (int i = 0; i < Np; i++) {
+        A[Nm + i] = Aplus[i];
+    }
+    
+    delete[] Aminus;
+    delete[] Aplus;
+}
+
 void printArray(int arr[], int n) {
     for (int i = 0; i < n; i++) {
         cout << arr[i] << " ";
@@ -57,7 +88,7 @@ int main() {
     cout << "До сортировки: ";
     printArray(arr1, n1);
     
-    BitSort(arr1, n1);
+    bitSort(arr1, n1);
     
     cout << "После сортировки: ";
     printArray(arr1, n1);
@@ -70,10 +101,23 @@ int main() {
     cout << "До сортировки: ";
     printArray(arr2, n2);
     
-    BitSort(arr2, n2);
+    bitSort(arr2, n2);
     
     cout << "После сортировки: ";
     printArray(arr2, n2);
+    cout << endl;
+    
+    int arr3[] = {0,1,2,3,4,5,6,7,12,54,55,7,2,8,-3, -1, -4,0, -2, -5,-6,-234,-99,543,-53,543,-87,-987};
+    int n3 = sizeof(arr3) / sizeof(arr3[0]);
+    
+    cout << "Оба диапозона чисел" << endl;
+    cout << "До сортировки: ";
+    printArray(arr3, n3);
+    
+    bitSortMix(arr3, n3);
+    
+    cout << "После сортировки: ";
+    printArray(arr3, n3);
     cout << endl;
     
     return 0;
