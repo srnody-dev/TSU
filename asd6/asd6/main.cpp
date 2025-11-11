@@ -6,6 +6,7 @@
 //
 
 #include <iostream>
+#include <random>
 
 using namespace std;
 
@@ -73,52 +74,108 @@ void bitSortMix(int A[], int n) {
     delete[] Aplus;
 }
 
-void printArray(int arr[], int n) {
+void bitSortInvert(int A[], int n) {
+    if (n <= 1) return;
+    
+    const int t = sizeof(int) * 8;
+    int* A0 = new int[n];
+    int* A1 = new int[n];
+    int n0, n1;
+    
     for (int i = 0; i < n; i++) {
-        cout << arr[i] << " ";
+        A[i] ^= (1 << (t-1));
     }
-    cout << endl;
+    
+    for (int k = 0; k < t; k++) {
+        n0 = 0; n1 = 0;
+        
+        for (int i = 0; i < n; i++) {
+            if (A[i] & (1 << k)) {
+                A1[n1] = A[i];
+                n1++;
+            } else {
+                A0[n0] = A[i];
+                n0++;
+            }
+        }
+        
+        for (int i = 0; i < n0; i++) {
+            A[i] = A0[i];
+        }
+        for (int i = 0; i < n1; i++) {
+            A[n0 + i] = A1[i];
+        }
+    }
+    
+    for (int i = 0; i < n; i++) {
+        A[i] ^= (1 << (t-1));
+    }
+    
+    delete[] A0;
+    delete[] A1;
+}
+
+inline bool isSorted(const int arr[], int n) {
+    for (int i = 0; i < n - 1; i++) {
+        if (arr[i] > arr[i + 1]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+void randomArray(int arr[], int n, int minValue, int maxValue) {
+    std::random_device randomDevice;
+    std::mt19937 generator(randomDevice());
+    std::uniform_int_distribution<int> dist(minValue, maxValue);
+    
+    for (int i = 0; i < n; i++) {
+        arr[i] = dist(generator);
+    }
+}
+
+void copyArray(int copy[], int original[], int n) {
+    for (int i = 0; i < n; i++) {
+        copy[i] = original[i];
+    }
+}
+
+void testSortingFunctions() {
+    const int n = 1000000;
+    int* originalArray = new int[n];
+    int* testArray1 = new int[n];
+    int* testArray2 = new int[n];
+    
+    randomArray(originalArray, n, -100000, 100000);
+    copyArray(testArray1, originalArray, n);
+    copyArray(testArray2, originalArray, n);
+        
+    clock_t start1 = clock();
+    bitSortMix(testArray1, n);
+    clock_t end1 = clock();
+    double duration1 = ((double)(end1 - start1)) / CLOCKS_PER_SEC;
+        
+    clock_t start2 = clock();
+    bitSortInvert(testArray2, n);
+    clock_t end2 = clock();
+    double duration2 = ((double)(end2 - start2)) / CLOCKS_PER_SEC;
+        
+    bool sorted1 = isSorted(testArray1, n);
+    bool sorted2 = isSorted(testArray2, n);
+        
+    cout << "bitSortMix:" << endl;
+    cout << "Отсортирован: " << (sorted1 ? "Да" : "НЕТ!") << endl;
+    cout << "Время выполнения: " << duration1 << " секунд" << endl;
+    cout << "bitSortInvert:" << endl;
+    cout << "Отсортирован: " << (sorted2 ? "Да" : "НЕТ!") << endl;
+    cout << "Время выполнения: " << duration2 << " секунд" << endl;
+    
+    delete[] originalArray;
+    delete[] testArray1;
+    delete[] testArray2;
 }
 
 int main() {
-    int arr1[] = {5, 2, 3, 1, 4,9};
-    int n1 = sizeof(arr1) / sizeof(arr1[0]);
-    
-    cout << "Положительные числа" << endl;
-    cout << "До сортировки: ";
-    printArray(arr1, n1);
-    
-    bitSort(arr1, n1);
-    
-    cout << "После сортировки: ";
-    printArray(arr1, n1);
-    cout << endl;
-    
-    int arr2[] = {-3, -1, -4, -2, -5};
-    int n2 = sizeof(arr2) / sizeof(arr2[0]);
-    
-    cout << "Отрицательные числа" << endl;
-    cout << "До сортировки: ";
-    printArray(arr2, n2);
-    
-    bitSort(arr2, n2);
-    
-    cout << "После сортировки: ";
-    printArray(arr2, n2);
-    cout << endl;
-    
-    int arr3[] = {0,1,2,3,4,5,6,7,12,54,55,7,2,8,-3, -1, -4,0, -2, -5,-6,-234,-99,543,-53,543,-87,-987};
-    int n3 = sizeof(arr3) / sizeof(arr3[0]);
-    
-    cout << "Оба диапозона чисел" << endl;
-    cout << "До сортировки: ";
-    printArray(arr3, n3);
-    
-    bitSortMix(arr3, n3);
-    
-    cout << "После сортировки: ";
-    printArray(arr3, n3);
-    cout << endl;
-    
+    testSortingFunctions();
     return 0;
 }
