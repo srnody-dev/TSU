@@ -252,7 +252,7 @@ void testSorting(const TestArray* testArray, int runs) {
         
         free(arr);
     }
-    
+    /*
     // First pivot
     for (int i = 0; i < runs; i++) {
         int* arr = (int*)malloc(testArray->size * sizeof(int));
@@ -328,6 +328,7 @@ void testSorting(const TestArray* testArray, int runs) {
         free(arr);
     }
     
+     */
     
     // ThreeZone pivot
         for (int i = 0; i < runs; i++) {
