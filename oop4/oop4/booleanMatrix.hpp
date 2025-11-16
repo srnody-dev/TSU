@@ -24,7 +24,10 @@ public:
     uint32_t numColumns() const;
     void swap(BooleanMatrix& other);
     uint32_t getWeight() const;
-
+    uint32_t getRowWeight(uint32_t rowIndex) const;
+    
+    BooleanVector rowAnd() const;
+    BooleanVector rowOr() const;
     BooleanVector& operator[](uint32_t rowIndex);
     const BooleanVector& operator[](uint32_t rowIndex) const;
     

@@ -117,3 +117,35 @@ std::istream& operator>>(std::istream& is, BooleanMatrix& matrix)
     matrix = temp;
     return is;
 }
+
+uint32_t BooleanMatrix::getRowWeight(uint32_t rowIndex) const
+{
+    if (rowIndex >= numRows())
+        throw std::runtime_error("Invalid row index");
+    
+    return matrixData_[rowIndex].getWeight();
+}
+
+BooleanVector BooleanMatrix::rowAnd() const
+{
+    if (numRows() == 0) return BooleanVector();
+    
+    BooleanVector result = matrixData_[0];
+    for (uint32_t i = 1; i < numRows(); ++i)
+    {
+        result &= matrixData_[i];
+    }
+    return result;
+}
+
+BooleanVector BooleanMatrix::rowOr() const
+{
+    if (numRows() == 0) return BooleanVector();
+    
+    BooleanVector result = matrixData_[0];
+    for (uint32_t i = 1; i < numRows(); ++i)
+    {
+        result |= matrixData_[i];
+    }
+    return result;
+}

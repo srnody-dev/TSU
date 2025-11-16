@@ -22,6 +22,10 @@ int main() {
     std::cout << "m2.columns() = " << m2.numColumns() << std::endl;
     std::cout << "m2.weight() = " << m2.getWeight() << std::endl;
     
+    std::cout << "Вес строки 0: " << m2.getRowWeight(0) << std::endl;
+    std::cout << "rowAND: " << m2.rowAnd() << std::endl;
+    std::cout << "rowOR: " << m2.rowOr() << std::endl;
+    
     std::cout << "Оператор []: " << std::endl;
     m2[0][1] = false;
     m2[1][0] = true;
