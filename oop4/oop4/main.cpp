@@ -26,6 +26,22 @@ int main() {
     std::cout << "rowAND: " << m2.rowAnd() << std::endl;
     std::cout << "rowOR: " << m2.rowOr() << std::endl;
     
+    std::cout << "До invertBit(0, 1): " << std::endl << m2 << std::endl;
+    m2.invertBit(0, 1);
+    std::cout << "После invertBit(0, 1): " << std::endl << m2 << std::endl;
+        
+    std::cout << "До invertBits(1, 1, 2): " << std::endl << m2 << std::endl;
+    m2.invertBits(1, 1, 2);
+    std::cout << "После invertBits(1, 1, 2): " << std::endl << m2 << std::endl;
+        
+    std::cout << "До setBit(0, 1, false): " << std::endl << m2 << std::endl;
+    m2.setBit(0, 1, false);
+    std::cout << "После setBit(0, 1, false): " << std::endl << m2 << std::endl;
+        
+    std::cout << "До setBits(1, 1, 2, true): " << std::endl << m2 << std::endl;
+    m2.setBits(1, 0, 2, true);
+    std::cout << "После setBits(1, 1, 2, true): " << std::endl << m2 << std::endl;
+        
     std::cout << "Оператор []: " << std::endl;
     m2[0][1] = false;
     m2[1][0] = true;

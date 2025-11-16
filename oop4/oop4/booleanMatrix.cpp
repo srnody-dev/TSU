@@ -149,3 +149,54 @@ BooleanVector BooleanMatrix::rowOr() const
     }
     return result;
 }
+
+void BooleanMatrix::invertBit(uint32_t rowIndex, uint32_t columnIndex)
+{
+    if (rowIndex >= numRows() || columnIndex >= numColumns())
+        throw std::runtime_error("Invalid row index");
+    
+    matrixData_[rowIndex].invert(columnIndex);
+}
+
+void BooleanMatrix::invertBits(uint32_t rowIndex, uint32_t startColumn, uint32_t numBits)
+{
+    if (rowIndex >= numRows() || startColumn >= numColumns())
+        throw std::runtime_error("Invalid row index");
+    
+    uint32_t endColumn = startColumn + numBits;
+    if (endColumn > numColumns()) {
+        endColumn = numColumns();
+    }
+    
+    for (uint32_t columnIndex = startColumn; columnIndex < endColumn; ++columnIndex)
+    {
+        matrixData_[rowIndex].invert(columnIndex);
+    }
+}
+
+void BooleanMatrix::setBit(uint32_t rowIndex, uint32_t columnIndex, bool value)
+{
+    if (rowIndex >= numRows() || columnIndex >= numColumns())
+        throw std::runtime_error("Invalid row index");
+    
+    if (value)
+        matrixData_[rowIndex].set1(columnIndex);
+    else
+        matrixData_[rowIndex].set0(columnIndex);
+}
+
+void BooleanMatrix::setBits(uint32_t rowIndex, uint32_t startColumn, uint32_t numBits, bool value)
+{
+    if (rowIndex >= numRows() || startColumn >= numColumns())
+        throw std::runtime_error("Invalid row index");
+    
+    uint32_t endColumn = startColumn + numBits;
+    if (endColumn > numColumns()) {
+        endColumn = numColumns();
+    }
+    
+    for (uint32_t columnIndex = startColumn; columnIndex < endColumn; ++columnIndex)
+    {
+        setBit(rowIndex, columnIndex, value);
+    }
+}

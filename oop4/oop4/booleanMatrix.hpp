@@ -31,6 +31,11 @@ public:
     BooleanVector& operator[](uint32_t rowIndex);
     const BooleanVector& operator[](uint32_t rowIndex) const;
     
+    void invertBit(uint32_t rowIndex, uint32_t columnIndex);
+    void invertBits(uint32_t rowIndex, uint32_t startColumn, uint32_t numBits);
+    void setBit(uint32_t rowIndex, uint32_t columnIndex, bool value);
+    void setBits(uint32_t rowIndex, uint32_t startColumn, uint32_t numBits, bool value);
+    
     friend std::ostream& operator<<(std::ostream& os, const BooleanMatrix& matrix);
     friend std::istream& operator>>(std::istream& is, BooleanMatrix& matrix);
 
