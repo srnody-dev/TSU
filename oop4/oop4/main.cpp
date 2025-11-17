@@ -41,6 +41,26 @@ int main() {
     std::cout << "До setBits(1, 1, 2, true): " << std::endl << m2 << std::endl;
     m2.setBits(1, 0, 2, true);
     std::cout << "После setBits(1, 1, 2, true): " << std::endl << m2 << std::endl;
+    
+    std::cout << "operator=:" << std::endl;
+    BooleanMatrix m3 = m2;
+    std::cout << "m3 = m2: " << std::endl << m3 << std::endl;
+        
+    std::cout << "operator&:" << std::endl;
+    const char* data1[] = {"101", "110"};
+    const char* data2[] = {"110", "011"};
+    BooleanMatrix a(data1, 2, 3);
+    BooleanMatrix b(data2, 2, 3);
+    std::cout << "a: " << std::endl << a << std::endl;
+    std::cout << "b: " << std::endl << b << std::endl;
+    std::cout << "a & b: " << std::endl << (a & b) << std::endl;
+        
+    std::cout << "operator&=:" << std::endl;
+    a &= b;
+    std::cout << "a &= b: " << std::endl << a << std::endl;
+        
+    std::cout << "operator~:" << std::endl;
+    std::cout << "~m2: " << std::endl << (~m2) << std::endl;
         
     std::cout << "Оператор []: " << std::endl;
     m2[0][1] = false;

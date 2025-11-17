@@ -31,6 +31,11 @@ public:
     BooleanVector& operator[](uint32_t rowIndex);
     const BooleanVector& operator[](uint32_t rowIndex) const;
     
+    BooleanMatrix& operator=(const BooleanMatrix& other);
+    BooleanMatrix operator&(const BooleanMatrix& other) const;
+    BooleanMatrix& operator&=(const BooleanMatrix& other);
+    BooleanMatrix operator~() const;
+    
     void invertBit(uint32_t rowIndex, uint32_t columnIndex);
     void invertBits(uint32_t rowIndex, uint32_t startColumn, uint32_t numBits);
     void setBit(uint32_t rowIndex, uint32_t columnIndex, bool value);

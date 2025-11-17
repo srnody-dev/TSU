@@ -200,3 +200,40 @@ void BooleanMatrix::setBits(uint32_t rowIndex, uint32_t startColumn, uint32_t nu
         setBit(rowIndex, columnIndex, value);
     }
 }
+
+BooleanMatrix& BooleanMatrix::operator=(const BooleanMatrix& other)
+{
+    if (this != &other) {
+        matrixData_ = other.matrixData_;
+    }
+    return *this;
+}
+
+BooleanMatrix BooleanMatrix::operator&(const BooleanMatrix& other) const
+{
+    if (numRows() != other.numRows() || numColumns() != other.numColumns())
+        throw std::runtime_error("Matrix size mismatch");
+    
+    BooleanMatrix result(*this);
+    for (uint32_t i = 0; i < numRows(); ++i)
+    {
+        result.matrixData_[i] &= other.matrixData_[i];
+    }
+    return result;
+}
+
+BooleanMatrix& BooleanMatrix::operator&=(const BooleanMatrix& other)
+{
+    *this = *this & other;
+    return *this;
+}
+
+BooleanMatrix BooleanMatrix::operator~() const
+{
+    BooleanMatrix result(*this);
+    for (uint32_t i = 0; i < numRows(); ++i)
+    {
+        result.matrixData_[i] = ~result.matrixData_[i];
+    }
+    return result;
+}
