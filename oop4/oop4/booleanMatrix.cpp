@@ -36,6 +36,11 @@ BooleanMatrix::BooleanMatrix(const char** charMatrix, uint32_t numRows, uint32_t
     }
 }
 
+BooleanMatrix::BooleanMatrix(const BooleanMatrix& other)
+    : matrixData_(other.matrixData_)
+{
+}
+
 uint32_t BooleanMatrix::numRows() const
 {
     return matrixData_.getLength();
@@ -108,7 +113,7 @@ std::istream& operator>>(std::istream& is, BooleanMatrix& matrix)
     
     for (uint32_t i = 0; i < rows; ++i)
     {
-        char buffer[1000];
+        char buffer[144];
         is >> buffer;
         BooleanVector rowVector(buffer);
         temp[i] = rowVector;
@@ -237,3 +242,42 @@ BooleanMatrix BooleanMatrix::operator~() const
     }
     return result;
 }
+
+BooleanMatrix BooleanMatrix::operator|(const BooleanMatrix& other) const
+{
+    if (numRows() != other.numRows() || numColumns() != other.numColumns())
+        throw std::runtime_error("Matrix size mismatch");
+    
+    BooleanMatrix result(*this);
+    for (uint32_t i = 0; i < numRows(); ++i)
+    {
+        result.matrixData_[i] |= other.matrixData_[i];
+    }
+    return result;
+}
+
+BooleanMatrix& BooleanMatrix::operator|=(const BooleanMatrix& other)
+{
+    *this = *this | other;
+    return *this;
+}
+
+BooleanMatrix BooleanMatrix::operator^(const BooleanMatrix& other) const
+{
+    if (numRows() != other.numRows() || numColumns() != other.numColumns())
+        throw std::runtime_error("Matrix size mismatch");
+    
+    BooleanMatrix result(*this);
+    for (uint32_t i = 0; i < numRows(); ++i)
+    {
+        result.matrixData_[i] ^= other.matrixData_[i];
+    }
+    return result;
+}
+
+BooleanMatrix& BooleanMatrix::operator^=(const BooleanMatrix& other)
+{
+    *this = *this ^ other;
+    return *this;
+}
+

@@ -61,6 +61,32 @@ int main() {
         
     std::cout << "operator~:" << std::endl;
     std::cout << "~m2: " << std::endl << (~m2) << std::endl;
+    
+    std::cout << "operator|:" << std::endl;
+    const char* data3[] = {"101", "010"};
+    const char* data4[] = {"110", "101"};
+    BooleanMatrix c(data3, 2, 3);
+    BooleanMatrix d(data4, 2, 3);
+    std::cout << "c: " << std::endl << c << std::endl;
+    std::cout << "d: " << std::endl << d << std::endl;
+    std::cout << "c | d: " << std::endl << (c | d) << std::endl;
+        
+    std::cout << "operator|=:" << std::endl;
+    c |= d;
+    std::cout << "c |= d: " << std::endl << c << std::endl;
+        
+    std::cout << "operator^:" << std::endl;
+    const char* data5[] = {"101", "110"};
+    const char* data6[] = {"110", "011"};
+    BooleanMatrix e(data5, 2, 3);
+    BooleanMatrix f(data6, 2, 3);
+    std::cout << "e: " << std::endl << e << std::endl;
+    std::cout << "f: " << std::endl << f << std::endl;
+    std::cout << "e ^ f: " << std::endl << (e ^ f) << std::endl;
+        
+    std::cout << "operator^=:" << std::endl;
+    e ^= f;
+    std::cout << "e ^= f: " << std::endl << e << std::endl;
         
     std::cout << "Оператор []: " << std::endl;
     m2[0][1] = false;
@@ -80,8 +106,34 @@ int main() {
     std::cout << "Введенная матрица: " << std::endl;
     std::cout << inputMatrix << std::endl;
     
+    std::cout << "Размеры: " << inputMatrix.numRows() << "x" << inputMatrix.numColumns() << std::endl;
+    std::cout << "Вес матрицы: " << inputMatrix.getWeight() << std::endl;
+            
+    if (inputMatrix.numRows() > 0) {
+    std::cout << "Вес строки 0: " << inputMatrix.getRowWeight(0) << std::endl;
+        }
+            
+    std::cout << "rowAND: " << inputMatrix.rowAnd() << std::endl;
+    std::cout << "rowOR: " << inputMatrix.rowOr() << std::endl;
+            
+    if (inputMatrix.numRows() > 0 && inputMatrix.numColumns() > 0) {
+        std::cout << "invertBit(0,0):" << std::endl;
+        inputMatrix.invertBit(0, 0);
+        std::cout << inputMatrix << std::endl;
+        
+        std::cout << "setBit(0,0,true):" << std::endl;
+        inputMatrix.setBit(0, 0, true);
+        std::cout << inputMatrix << std::endl;
+    }
+    
+    BooleanMatrix copyMatrix = inputMatrix;
+    std::cout << "Копия матрицы: " << std::endl << copyMatrix << std::endl;
+            
+    std::cout << "Инверсия (~): " << std::endl << (~inputMatrix) << std::endl;
+            
+    std::cout << "inputMatrix & inputMatrix: " << std::endl << (inputMatrix & inputMatrix) << std::endl;
+    std::cout << "inputMatrix | inputMatrix: " << std::endl << (inputMatrix | inputMatrix) << std::endl;
+    std::cout << "inputMatrix ^ inputMatrix: " << std::endl << (inputMatrix ^ inputMatrix) << std::endl;
+        
     return 0;
-    
-    
-    
 }

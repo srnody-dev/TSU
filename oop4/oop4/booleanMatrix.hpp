@@ -17,7 +17,7 @@ public:
     BooleanMatrix() = default;
     BooleanMatrix(uint32_t numRows, uint32_t numColumns, bool initialValue = false);
     BooleanMatrix(const char** charMatrix, uint32_t numRows, uint32_t numColumns);
-    BooleanMatrix(const BooleanMatrix& other) = default;
+    BooleanMatrix(const BooleanMatrix& other);
     ~BooleanMatrix() = default;
 
     uint32_t numRows() const;
@@ -35,6 +35,10 @@ public:
     BooleanMatrix operator&(const BooleanMatrix& other) const;
     BooleanMatrix& operator&=(const BooleanMatrix& other);
     BooleanMatrix operator~() const;
+    BooleanMatrix operator|(const BooleanMatrix& other) const;
+    BooleanMatrix& operator|=(const BooleanMatrix& other);
+    BooleanMatrix operator^(const BooleanMatrix& other) const;
+    BooleanMatrix& operator^=(const BooleanMatrix& other);
     
     void invertBit(uint32_t rowIndex, uint32_t columnIndex);
     void invertBits(uint32_t rowIndex, uint32_t startColumn, uint32_t numBits);
