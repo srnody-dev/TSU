@@ -44,3 +44,44 @@ void TopSort::printNodeLinkMatrix() const {
         std::cout << std::endl;
     }
 }
+
+void TopSort::disconnectNode(uint32_t node, BooleanMatrix& matrix) const {
+    if (node < matrix.numRows()) {
+        for (uint32_t j = 0; j < nodeCount_; ++j) {
+            matrix.setBit(node, j, false);
+        }
+    }
+}
+
+BooleanVector TopSort::findStartNodes() const { // только для теста,удали потом
+    BooleanVector isSourceNode(nodeCount_, false);
+    
+    for (uint32_t column = 0; column < nodeCount_; ++column) {
+        for (uint32_t row = 0; row < nodeCount_; ++row) {
+            if (nodeLinkMatrix[row][column]) {
+                isSourceNode.set1(column);
+                break;
+            }
+        }
+    }
+    
+    return ~isSourceNode;
+}
+
+/*
+BooleanVector TopSort::findStartNodes(const BooleanMatrix& matrix) const {
+    BooleanVector isSourceNode(nodeCount_, false);
+    
+    for (uint32_t column = 0; column < nodeCount_; ++column) {
+        for (uint32_t row = 0; row < nodeCount_; ++row) {
+            if (matrix[row][column]) {
+                isSourceNode.set1(column);
+                break;
+            }
+        }
+    }
+    
+    return ~isSourceNode;
+}
+ 
+*/

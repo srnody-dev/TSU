@@ -21,5 +21,13 @@ int main() {
     graph.printNodeLinkMatrix();
     std::cout << std::endl;
     
+    BooleanVector starts = graph.findStartNodes();
+            
+    std::cout << "Стартовые узлы: ";
+    for (uint32_t i = 0; i < 9; ++i) {
+        if (starts[i]) std::cout << i << " ";
+    }
+    std::cout << std::endl;
+    
     return 0;
 }
