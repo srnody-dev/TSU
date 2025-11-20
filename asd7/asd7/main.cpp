@@ -10,24 +10,20 @@
 
 int main() {
     
-    TopSort graph(9);
+    TopSort graph(4);
     graph.addEdge(0, 1);
+    graph.addEdge(0, 2);
     graph.addEdge(1, 2);
-    graph.addEdge(3, 4);
-    graph.addEdge(4, 5);
-    graph.addEdge(6, 7);
-    graph.addEdge(7, 8);
+    graph.addEdge(2, 3);
     
     graph.printNodeLinkMatrix();
-    std::cout << std::endl;
     
-    BooleanVector starts = graph.findStartNodes();
-            
-    std::cout << "Стартовые узлы: ";
-    for (uint32_t i = 0; i < 9; ++i) {
-        if (starts[i]) std::cout << i << " ";
+    try {
+        DynamicArray<uint32_t> order = graph.sortTop();
+        graph.printSortTopResult(order);
+    } catch (const std::exception& e) {
+        std::cout << "Ошибка сортировки: " << e.what() << std::endl;
     }
-    std::cout << std::endl;
     
     return 0;
 }

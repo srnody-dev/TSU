@@ -53,22 +53,7 @@ void TopSort::disconnectNode(uint32_t node, BooleanMatrix& matrix) const {
     }
 }
 
-BooleanVector TopSort::findStartNodes() const { // только для теста,удали потом
-    BooleanVector isSourceNode(nodeCount_, false);
-    
-    for (uint32_t column = 0; column < nodeCount_; ++column) {
-        for (uint32_t row = 0; row < nodeCount_; ++row) {
-            if (nodeLinkMatrix[row][column]) {
-                isSourceNode.set1(column);
-                break;
-            }
-        }
-    }
-    
-    return ~isSourceNode;
-}
 
-/*
 BooleanVector TopSort::findStartNodes(const BooleanMatrix& matrix) const {
     BooleanVector isSourceNode(nodeCount_, false);
     
@@ -84,4 +69,40 @@ BooleanVector TopSort::findStartNodes(const BooleanMatrix& matrix) const {
     return ~isSourceNode;
 }
  
-*/
+DynamicArray<uint32_t> TopSort::sortTop() const {
+    DynamicArray<uint32_t> result;
+    BooleanMatrix matrix = nodeLinkMatrix;
+    BooleanVector visitedNodes(nodeCount_, false);
+    
+    while (result.getLength() < nodeCount_) {
+        BooleanVector sourceNodes = findStartNodes(matrix);
+        BooleanVector availableNodes = sourceNodes & (~visitedNodes);
+        
+        if (availableNodes.getWeight() == 0) {
+            throw std::runtime_error("Graph contains a cycle");
+        }
+        
+        bool nodesAdded = false;
+        for (uint32_t node = 0; node < nodeCount_; ++node) {
+            if (availableNodes[node] && !visitedNodes[node]) {
+                result.append(node);
+                visitedNodes.set1(node);
+                disconnectNode(node, matrix);
+                nodesAdded = true;
+            }
+        }
+    }
+    
+    return result;
+}
+
+void TopSort::printSortTopResult(const DynamicArray<uint32_t>& result) const {
+    std::cout << "Топологический порядок: ";
+    for (int i = 0; i < result.getLength(); ++i) {
+        std::cout << result[i];
+        if (i < result.getLength() - 1) {
+            std::cout << " -> ";
+        }
+    }
+    std::cout << std::endl;
+}
