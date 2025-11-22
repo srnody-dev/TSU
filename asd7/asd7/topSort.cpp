@@ -46,11 +46,15 @@ void TopSort::printNodeLinkMatrix() const {
 }
 void TopSort::printSortTopResult(const DynamicArray<uint32_t>& result) const {
     std::cout << "Топологический порядок: ";
+    bool first = true;
     for (int i = 0; i < result.getLength(); ++i) {
-        std::cout << result[i];
-        if (i < result.getLength() - 1) {
-            std::cout << " -> " ;
+        uint32_t node = result[i];
+        if (node == 0) continue;
+        if (!first) {
+            std::cout << " -> ";
         }
+        std::cout << node;
+        first = false;
     }
     std::cout << std::endl;
 }
@@ -96,4 +100,46 @@ DynamicArray<uint32_t> TopSort::sortTop() const {
     }
     
     return result;
+}
+
+
+TopSort TopSort::input() {
+    std::cout << "Введите дуги в формате: from to" << std::endl;
+    std::cout << "Для завершения введите: 0 0" << std::endl;
+    
+    uint32_t maxNode = 0;
+    
+    DynamicArray<uint32_t> fromList;
+    DynamicArray<uint32_t> toList;
+    
+    while (true) {
+        uint32_t from, to;
+        std::cin >> from >> to;
+        
+        if (from == 0 && to == 0) {
+            break;
+        }
+        
+        fromList.append(from);
+        toList.append(to);
+        if (from > maxNode) {
+            maxNode = from;
+        }
+        if (to > maxNode) {
+            maxNode = to;
+        }
+        
+        std::cout << "Добавлено: " << from << " -> " << to << std::endl;
+    }
+    
+    TopSort graph(maxNode + 1);
+    
+    for (int i = 0; i < fromList.getLength(); ++i) {
+        graph.addEdge(fromList[i], toList[i]);
+    }
+    
+    std::cout << "Создан граф с " << (maxNode + 1) << " вершинами и "
+    << fromList.getLength() << " ребрами" << std::endl << std::endl;
+    
+    return graph;
 }

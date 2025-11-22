@@ -10,21 +10,11 @@
 
 int main() {
     
-    TopSort graph(7);
+    TopSort graph = TopSort::input();
     
-    graph.addEdge(1, 3);
-    graph.addEdge(3, 5);
-    graph.addEdge(1, 2);
-    graph.addEdge(2, 4);
-    graph.addEdge(4, 5);
-    graph.addEdge(4, 6);
-    
+    std::cout << std::endl;
     graph.printNodeLinkMatrix();
-    
-    DynamicArray<uint32_t> order = graph.sortTop();
-    std::cout << std::endl;
-    graph.printSortTopResult(order);
-    std::cout << std::endl;
-    
+    DynamicArray<uint32_t> result = graph.sortTop();
+    graph.printSortTopResult(result);
     return 0;
 }

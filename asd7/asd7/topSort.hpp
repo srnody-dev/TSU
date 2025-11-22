@@ -20,6 +20,8 @@ public:
     
     DynamicArray<uint32_t> sortTop() const;
     void printSortTopResult(const DynamicArray<uint32_t>& result) const;
+
+    static TopSort input();
     
 private:
     BooleanMatrix nodeLinkMatrix;
