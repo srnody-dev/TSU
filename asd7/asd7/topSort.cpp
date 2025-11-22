@@ -44,65 +44,56 @@ void TopSort::printNodeLinkMatrix() const {
         std::cout << std::endl;
     }
 }
-
-void TopSort::disconnectNode(uint32_t node, BooleanMatrix& matrix) const {
-    if (node < matrix.numRows()) {
-        for (uint32_t j = 0; j < nodeCount_; ++j) {
-            matrix.setBit(node, j, false);
-        }
-    }
-}
-
-
-BooleanVector TopSort::findStartNodes(const BooleanMatrix& matrix) const {
-    BooleanVector isSourceNode(nodeCount_, false);
-    
-    for (uint32_t column = 0; column < nodeCount_; ++column) {
-        for (uint32_t row = 0; row < nodeCount_; ++row) {
-            if (matrix[row][column]) {
-                isSourceNode.set1(column);
-                break;
-            }
-        }
-    }
-    
-    return ~isSourceNode;
-}
- 
-DynamicArray<uint32_t> TopSort::sortTop() const {
-    DynamicArray<uint32_t> result;
-    BooleanMatrix matrix = nodeLinkMatrix;
-    BooleanVector visitedNodes(nodeCount_, false);
-    
-    while (result.getLength() < nodeCount_) {
-        BooleanVector sourceNodes = findStartNodes(matrix);
-        BooleanVector availableNodes = sourceNodes & (~visitedNodes);
-        
-        if (availableNodes.getWeight() == 0) {
-            throw std::runtime_error("Graph contains a cycle");
-        }
-        
-        bool nodesAdded = false;
-        for (uint32_t node = 0; node < nodeCount_; ++node) {
-            if (availableNodes[node] && !visitedNodes[node]) {
-                result.append(node);
-                visitedNodes.set1(node);
-                disconnectNode(node, matrix);
-                nodesAdded = true;
-            }
-        }
-    }
-    
-    return result;
-}
-
 void TopSort::printSortTopResult(const DynamicArray<uint32_t>& result) const {
     std::cout << "Топологический порядок: ";
     for (int i = 0; i < result.getLength(); ++i) {
         std::cout << result[i];
         if (i < result.getLength() - 1) {
-            std::cout << " -> ";
+            std::cout << " -> " ;
         }
     }
     std::cout << std::endl;
+}
+
+BooleanVector TopSort::BuildV1(const BooleanMatrix& currentMatrix) const { //ищем вершины которые достигаются тоесть имеют входящие ребра
+    BooleanVector v1(nodeCount_, false); //вектор вершин имеющих входящие ребра
+    
+    for (uint32_t i = 0; i < nodeCount_; ++i) {
+        for (uint32_t j = 0; j < nodeCount_; ++j) {
+            if (currentMatrix[i][j]) {
+                v1.set1(j);
+            }
+        }
+    }
+    
+    return v1;
+}
+
+DynamicArray<uint32_t> TopSort::sortTop() const {
+    DynamicArray<uint32_t> result;
+    BooleanMatrix currentMatrix = nodeLinkMatrix;
+    BooleanVector v0(nodeCount_, false); //вектор обработанных вершин
+    
+    while (result.getLength() < nodeCount_) {
+        BooleanVector v1 = BuildV1(currentMatrix);
+        BooleanVector not_v1 = ~v1; //вектор не имеющий входящих ребер
+        BooleanVector v2 = not_v1 & (~v0); // доступные для добавление
+    
+        
+        if (v2.getWeight() == 0) {
+            throw std::runtime_error("Граф содержит цикл");
+        }
+        
+        for (uint32_t node = 0; node < nodeCount_; ++node) {
+            if (v2[node] && !v0[node]) {
+                result.append(node);
+                v0.set1(node);
+                for (uint32_t j = 0; j < nodeCount_; ++j) {
+                    currentMatrix.setBit(node, j, false);
+                }
+            }
+        }
+    }
+    
+    return result;
 }

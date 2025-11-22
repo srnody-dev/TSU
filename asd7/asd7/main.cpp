@@ -10,20 +10,21 @@
 
 int main() {
     
-    TopSort graph(4);
-    graph.addEdge(0, 1);
-    graph.addEdge(0, 2);
+    TopSort graph(7);
+    
+    graph.addEdge(1, 3);
+    graph.addEdge(3, 5);
     graph.addEdge(1, 2);
-    graph.addEdge(2, 3);
+    graph.addEdge(2, 4);
+    graph.addEdge(4, 5);
+    graph.addEdge(4, 6);
     
     graph.printNodeLinkMatrix();
     
-    try {
-        DynamicArray<uint32_t> order = graph.sortTop();
-        graph.printSortTopResult(order);
-    } catch (const std::exception& e) {
-        std::cout << "Ошибка сортировки: " << e.what() << std::endl;
-    }
+    DynamicArray<uint32_t> order = graph.sortTop();
+    std::cout << std::endl;
+    graph.printSortTopResult(order);
+    std::cout << std::endl;
     
     return 0;
 }

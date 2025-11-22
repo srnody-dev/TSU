@@ -24,7 +24,5 @@ public:
 private:
     BooleanMatrix nodeLinkMatrix;
     uint32_t nodeCount_;
-    
-    BooleanVector findStartNodes(const BooleanMatrix& matrix) const;
-    void disconnectNode(uint32_t node, BooleanMatrix& matrix) const;
+    BooleanVector BuildV1(const BooleanMatrix& currentMatrix) const;
 };
