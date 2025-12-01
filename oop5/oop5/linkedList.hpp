@@ -33,6 +33,14 @@ public:
     void removeFromTail();
     void removeAtPosition(uint32_t position);
     void removeByKey(const ItemType& key);
+    void swap(LinkedList<ItemType>& other);
+    
+    ItemType* find(const ItemType& key);
+    const ItemType* find(const ItemType& key) const;
+    ItemType& findMax();
+    const ItemType& findMax() const;
+    ItemType& findMin();
+    const ItemType& findMin() const;
 
 private:
     ListNode *headPtr_ = nullptr;
@@ -265,6 +273,132 @@ void LinkedList<ItemType>::removeByKey(const ItemType& key)
         ++position;
     }
 }
+
+template<typename ItemType>
+ItemType* LinkedList<ItemType>::find(const ItemType& key)
+{
+    ListNode* current = headPtr_;
+    while (current != nullptr)
+    {
+        if (current->getValue() == key)
+        {
+            return &(current->getValue());
+        }
+        current = current->getLinkToNextNode();
+    }
+    return nullptr;
+}
+
+template<typename ItemType>
+const ItemType* LinkedList<ItemType>::find(const ItemType& key) const
+{
+    const ListNode* current = headPtr_;
+    while (current != nullptr)
+    {
+        if (current->getValue() == key)
+        {
+            return &(current->getValue());
+        }
+        current = current->getLinkToNextNode();
+    }
+    return nullptr;
+}
+
+template<typename ItemType>
+ItemType& LinkedList<ItemType>::findMax()
+{
+    if (isEmpty()) throw std::runtime_error("List is empty");
+
+    ListNode* current = headPtr_;
+    ListNode* maxNode = headPtr_;
+    
+    while (current != nullptr)
+    {
+        if (current->getValue() > maxNode->getValue())
+        {
+            maxNode = current;
+        }
+        current = current->getLinkToNextNode();
+    }
+    
+    return maxNode->getValue();
+}
+
+template<typename ItemType>
+const ItemType& LinkedList<ItemType>::findMax() const
+{
+    if (isEmpty()) throw std::runtime_error("List is empty");
+
+    const ListNode* current = headPtr_;
+    const ListNode* maxNode = headPtr_;
+    
+    while (current != nullptr)
+    {
+        if (current->getValue() > maxNode->getValue())
+        {
+            maxNode = current;
+        }
+        current = current->getLinkToNextNode();
+    }
+    
+    return maxNode->getValue();
+}
+template<typename ItemType>
+ItemType& LinkedList<ItemType>::findMin()
+{
+    if (isEmpty()) throw std::runtime_error("List is empty");
+
+    ListNode* current = headPtr_;
+    ListNode* minNode = headPtr_;
+    
+    while (current != nullptr)
+    {
+        if (current->getValue() < minNode->getValue())
+        {
+            minNode = current;
+        }
+        current = current->getLinkToNextNode();
+    }
+    
+    return minNode->getValue();
+}
+
+template<typename ItemType>
+const ItemType& LinkedList<ItemType>::findMin() const
+{
+    if (isEmpty()) throw std::runtime_error("List is empty");
+
+    const ListNode* current = headPtr_;
+    const ListNode* minNode = headPtr_;
+    
+    while (current != nullptr)
+    {
+        if (current->getValue() < minNode->getValue())
+        {
+            minNode = current;
+        }
+        current = current->getLinkToNextNode();
+    }
+    
+    return minNode->getValue();
+}
+
+template<typename ItemType>
+void LinkedList<ItemType>::swap(LinkedList<ItemType>& other)
+{
+    ListNode* tempHead = headPtr_;
+    headPtr_ = other.headPtr_;
+    other.headPtr_ = tempHead;
+        
+    ListNode* tempTail = tailPtr_;
+    tailPtr_ = other.tailPtr_;
+    other.tailPtr_ = tempTail;
+        
+    uint32_t tempSize = size_;
+    size_ = other.size_;
+    other.size_ = tempSize;
+}
+
 
 template<typename ItemType>
 typename LinkedList<ItemType>::ListNode* LinkedList<ItemType>::getNodeAt(uint32_t position) const

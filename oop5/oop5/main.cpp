@@ -47,6 +47,28 @@ int main()
     std::cout << "\nТест removeByKey(40):" << std::endl;
     list1.removeByKey(40);
     std::cout << "Размер: " << list1.getSize() << std::endl;
+    
+    std::cout << "\nПоиск 30 в list1: ";
+    int* found = list1.find(30);
+    if (found) {
+        std::cout << "найден " << *found << std::endl;
+    } else {
+        std::cout << "не найден" << std::endl;
+    }
+        
+    std::cout << "\nМаксимальный элемент: " << list1.findMax() << std::endl;
+    std::cout << "\nМинимальный элемент: " << list1.findMin() << std::endl;
+        
+    LinkedList<int> list2;
+    list2.addToTail(10);
+    list2.addToTail(20);
+    std::cout << "\nСоздан list2, размер: " << list2.getSize() << std::endl;
+            
+    std::cout << "До swap: list1 размер = " << list1.getSize()<< ", list2 размер = " << list2.getSize() << std::endl;
+            
+    list1.swap(list2);
+            
+    std::cout << "После swap: list1 размер = " << list1.getSize()<< ", list2 размер = " << list2.getSize()<<std::endl;
 
     std::cout << "\nОчищаем список:" << std::endl;
     list1.clear();
