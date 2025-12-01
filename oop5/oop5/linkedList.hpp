@@ -26,14 +26,19 @@ public:
 
     void addToHead(const ItemType& value);
     void addToTail(const ItemType& value);
+    void addAtPosition(uint32_t position, const ItemType& value);
+    void addAfterKey(const ItemType& key, const ItemType& value);
 
     void removeFromHead();
     void removeFromTail();
+    void removeAtPosition(uint32_t position);
+    void removeByKey(const ItemType& key);
 
 private:
     ListNode *headPtr_ = nullptr;
     ListNode *tailPtr_ = nullptr;
     uint32_t size_ = 0;
+    ListNode* getNodeAt(uint32_t position) const;
 };
 
 template<typename ItemType>
@@ -167,6 +172,111 @@ void LinkedList<ItemType>::removeFromTail()
     
     delete temp;
     --size_;
+}
+
+template<typename ItemType>
+void LinkedList<ItemType>::addAtPosition(uint32_t position, const ItemType& value)
+{
+    if (position == 0)
+    {
+        addToHead(value);
+    }
+    else if (position >= size_)
+    {
+        addToTail(value);
+    }
+    else
+    {
+        ListNode* current = getNodeAt(position);
+        ListNode* newNode = new ListNode(value, current, current->getLinkToPrevNode());
+        
+        current->getLinkToPrevNode()->setLinkToNextNode(newNode);
+        current->setLinkToPrevNode(newNode);
+        
+        ++size_;
+    }
+}
+
+template<typename ItemType>
+void LinkedList<ItemType>::addAfterKey(const ItemType& key, const ItemType& value)
+{
+    ListNode* current = headPtr_;
+    while (current != nullptr)
+    {
+        if (current->getValue() == key)
+        {
+            ListNode* newNode = new ListNode(value, current->getLinkToNextNode(), current);
+            
+            if (current->getLinkToNextNode())
+            {
+                current->getLinkToNextNode()->setLinkToPrevNode(newNode);
+            }
+            else
+            {
+                tailPtr_ = newNode;
+            }
+            
+            current->setLinkToNextNode(newNode);
+            ++size_;
+            return;
+        }
+        current = current->getLinkToNextNode();
+    }
+    addToTail(value);
+}
+
+template<typename ItemType>
+void LinkedList<ItemType>::removeAtPosition(uint32_t position)
+{
+    if (position >= size_) return;
+
+    if (position == 0)
+    {
+        removeFromHead();
+    }
+    else if (position == size_ - 1)
+    {
+        removeFromTail();
+    }
+    else
+    {
+        ListNode* current = getNodeAt(position);
+        current->getLinkToPrevNode()->setLinkToNextNode(current->getLinkToNextNode());
+        current->getLinkToNextNode()->setLinkToPrevNode(current->getLinkToPrevNode());
+        delete current;
+        --size_;
+    }
+}
+
+template<typename ItemType>
+void LinkedList<ItemType>::removeByKey(const ItemType& key)
+{
+    ListNode* current = headPtr_;
+    uint32_t position = 0;
+    
+    while (current != nullptr)
+    {
+        if (current->getValue() == key)
+        {
+            removeAtPosition(position);
+            return;
+        }
+        current = current->getLinkToNextNode();
+        ++position;
+    }
+}
+
+template<typename ItemType>
+typename LinkedList<ItemType>::ListNode* LinkedList<ItemType>::getNodeAt(uint32_t position) const
+{
+    if (position >= size_) return nullptr;
+
+    ListNode* current = headPtr_;
+    for (uint32_t i = 0; i < position; ++i)
+    {
+        current = current->getLinkToNextNode();
+    }
+    return current;
 }
 
 

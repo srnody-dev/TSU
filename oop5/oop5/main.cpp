@@ -31,6 +31,22 @@ int main()
     std::cout << "\nУдаляем из хвоста:" << std::endl;
     list1.removeFromTail();
     std::cout << "Размер после удаления из хвоста: " << list1.getSize() << std::endl;
+    
+    std::cout << "\nТест addAtPosition(1, 99):" << std::endl;
+    list1.addAtPosition(1, 99);
+    std::cout << "Размер: " << list1.getSize() << std::endl;
+    
+    std::cout << "\nТест addAfterKey(99, 88):" << std::endl;
+    list1.addAfterKey(99, 88);
+    std::cout << "Размер: " << list1.getSize() << std::endl;
+    
+    std::cout << "\nТест removeAtPosition(2):" << std::endl;
+    list1.removeAtPosition(2);
+    std::cout << "Размер: " << list1.getSize() << std::endl;
+    
+    std::cout << "\nТест removeByKey(40):" << std::endl;
+    list1.removeByKey(40);
+    std::cout << "Размер: " << list1.getSize() << std::endl;
 
     std::cout << "\nОчищаем список:" << std::endl;
     list1.clear();
