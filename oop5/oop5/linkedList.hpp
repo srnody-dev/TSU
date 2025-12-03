@@ -41,6 +41,10 @@ public:
     const ItemType& findMax() const;
     ItemType& findMin();
     const ItemType& findMin() const;
+    
+    LinkedList<ItemType>& operator=(const LinkedList<ItemType>& other);
+    ItemType& operator[](uint32_t index);
+    const ItemType& operator[](uint32_t index) const;
 
 private:
     ListNode *headPtr_ = nullptr;
@@ -412,6 +416,34 @@ typename LinkedList<ItemType>::ListNode* LinkedList<ItemType>::getNodeAt(uint32_
     }
     return current;
 }
+
+template<typename ItemType>
+LinkedList<ItemType>& LinkedList<ItemType>::operator=(const LinkedList<ItemType>& other)
+{
+    if (this != &other)
+    {
+        LinkedList<ItemType> temp(other);
+        swap(temp);
+    }
+    return *this;
+}
+
+template<typename ItemType>
+ItemType& LinkedList<ItemType>::operator[](uint32_t index)
+{
+    ListNode* node = getNodeAt(index);
+    if (!node) throw std::runtime_error("Index out of range");
+    return node->getValue();
+}
+
+template<typename ItemType>
+const ItemType& LinkedList<ItemType>::operator[](uint32_t index) const
+{
+    const ListNode* node = getNodeAt(index);
+    if (!node) throw std::runtime_error("Index out of range");
+    return node->getValue();
+}
+
 
 
 template<typename ItemType>
