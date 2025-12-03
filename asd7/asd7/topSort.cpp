@@ -11,9 +11,6 @@ TopSort::TopSort(const BooleanMatrix& nodeLinkMatrix)
     : nodeLinkMatrix(nodeLinkMatrix)
     , nodeCount_(nodeLinkMatrix.numColumns())
 {
-    if (nodeLinkMatrix.numRows() != nodeLinkMatrix.numColumns()) {
-        throw std::invalid_argument("Matrix must be squar");
-    }
 }
 
 TopSort::TopSort(uint32_t nodeCount)
@@ -24,7 +21,7 @@ TopSort::TopSort(uint32_t nodeCount)
 
 void TopSort::addEdge(uint32_t from, uint32_t to) {
     if (from >= nodeCount_ || to >= nodeCount_) {
-        throw std::out_of_range("Index out of range");
+        throw std::runtime_error("Index out of range");
     }
     nodeLinkMatrix.setBit(from, to, true);
 }
@@ -47,20 +44,33 @@ void TopSort::printNodeLinkMatrix() const {
 void TopSort::printSortTopResult(const DynamicArray<uint32_t>& result) const {
     std::cout << "Топологический порядок: ";
     bool first = true;
+    
+    BooleanVector usedVertices(nodeCount_, false);
+    for (uint32_t i = 0; i < nodeCount_; ++i) {
+        for (uint32_t j = 0; j < nodeCount_; ++j) {
+            if (nodeLinkMatrix[i][j]) {
+                usedVertices.set1(i);
+                usedVertices.set1(j);
+            }
+        }
+    }
+    
     for (int i = 0; i < result.getLength(); ++i) {
         uint32_t node = result[i];
-        if (node == 0) continue;
-        if (!first) {
-            std::cout << " -> ";
+        
+        if (usedVertices[node]) {
+            if (!first) {
+                std::cout << " -> ";
+            }
+            std::cout << node;
+            first = false;
         }
-        std::cout << node;
-        first = false;
     }
     std::cout << std::endl;
 }
 
 BooleanVector TopSort::BuildV1(const BooleanMatrix& currentMatrix) const { //ищем вершины которые достигаются тоесть имеют входящие ребра
-    BooleanVector v1(nodeCount_, false); //вектор вершин имеющих входящие ребра
+    BooleanVector v1(nodeCount_, false);
     
     for (uint32_t i = 0; i < nodeCount_; ++i) {
         for (uint32_t j = 0; j < nodeCount_; ++j) {
