@@ -69,6 +69,17 @@ int main()
     list1.swap(list2);
             
     std::cout << "После swap: list1 размер = " << list1.getSize()<< ", list2 размер = " << list2.getSize()<<std::endl;
+    
+    LinkedList<int> a, b, c;
+    a.addToTail(1); a.addToTail(2);
+    b.addToTail(1); b.addToTail(2);
+    c.addToTail(3);
+        
+    std::cout << "\nТест == и !=:" << std::endl;
+    std::cout << "a == b: " << (a == b ? "true" : "false") << std::endl;
+    std::cout << "a != b: " << (a != b ? "true" : "false") << std::endl;
+    std::cout << "a == c: " << (a == c ? "true" : "false") << std::endl;
+    std::cout << "a != c: " << (a != c ? "true" : "false") << std::endl;
 
     std::cout << "\nОчищаем список:" << std::endl;
     list1.clear();

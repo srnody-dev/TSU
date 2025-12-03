@@ -18,6 +18,8 @@ private:
 
 public:
     LinkedList() = default;
+    LinkedList(const ItemType* array, uint32_t size);
+    LinkedList(const LinkedList<ItemType>& other);
     ~LinkedList();
 
     uint32_t getSize() const;
@@ -45,7 +47,10 @@ public:
     LinkedList<ItemType>& operator=(const LinkedList<ItemType>& other);
     ItemType& operator[](uint32_t index);
     const ItemType& operator[](uint32_t index) const;
-
+    bool operator==(const LinkedList<ItemType>& other) const;
+    bool operator!=(const LinkedList<ItemType>& other) const;
+    
+   
 private:
     ListNode *headPtr_ = nullptr;
     ListNode *tailPtr_ = nullptr;
@@ -76,6 +81,25 @@ private:
     ListNode *linkToPrevNode_;
 };
 
+template<typename ItemType>
+LinkedList<ItemType>::LinkedList(const ItemType* array, uint32_t size)
+{
+    for (uint32_t i = 0; i < size; ++i)
+    {
+        addToTail(array[i]);
+    }
+}
+
+template<typename ItemType>
+LinkedList<ItemType>::LinkedList(const LinkedList<ItemType>& other)
+{
+    ListNode* current = other.headPtr_;
+    while (current != nullptr)
+    {
+        addToTail(current->getValue());
+        current = current->getLinkToNextNode();
+    }
+}
 
 template<typename ItemType>
 LinkedList<ItemType>::~LinkedList()
@@ -442,6 +466,30 @@ const ItemType& LinkedList<ItemType>::operator[](uint32_t index) const
     const ListNode* node = getNodeAt(index);
     if (!node) throw std::runtime_error("Index out of range");
     return node->getValue();
+}
+
+template<typename ItemType>
+bool LinkedList<ItemType>::operator==(const LinkedList<ItemType>& other) const
+{
+    if (size_ != other.size_) return false;
+    
+    const ListNode* current1 = headPtr_;
+    const ListNode* current2 = other.headPtr_;
+    
+    while (current1 != nullptr && current2 != nullptr)
+    {
+        if (current1->getValue() != current2->getValue()) return false;
+        current1 = current1->getLinkToNextNode();
+        current2 = current2->getLinkToNextNode();
+    }
+    
+    return true;
+}
+
+template<typename ItemType>
+bool LinkedList<ItemType>::operator!=(const LinkedList<ItemType>& other) const
+{
+    return !(*this == other);
 }
 
 
