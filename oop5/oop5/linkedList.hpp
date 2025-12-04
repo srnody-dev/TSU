@@ -50,6 +50,14 @@ public:
     bool operator==(const LinkedList<ItemType>& other) const;
     bool operator!=(const LinkedList<ItemType>& other) const;
     
+    LinkedList<ItemType> operator+(const LinkedList<ItemType>& other) const;
+    LinkedList<ItemType>& operator+=(const LinkedList<ItemType>& other);
+    
+    template<typename T>
+    friend std::ostream& operator<<(std::ostream& os, const LinkedList<T>& list);
+    
+    template<typename T>
+    friend std::istream& operator>>(std::istream& is, LinkedList<T>& list);
    
 private:
     ListNode *headPtr_ = nullptr;
@@ -492,6 +500,25 @@ bool LinkedList<ItemType>::operator!=(const LinkedList<ItemType>& other) const
     return !(*this == other);
 }
 
+template<typename ItemType>
+LinkedList<ItemType> LinkedList<ItemType>::operator+(const LinkedList<ItemType>& other) const
+{
+    LinkedList<ItemType> result(*this);
+    result += other;
+    return result;
+}
+
+template<typename ItemType>
+LinkedList<ItemType>& LinkedList<ItemType>::operator+=(const LinkedList<ItemType>& other)
+{
+    const ListNode* current = other.headPtr_;
+    while (current != nullptr)
+    {
+        addToTail(current->getValue());
+        current = current->getLinkToNextNode();
+    }
+    return *this;
+}
 
 
 template<typename ItemType>
@@ -521,3 +548,39 @@ void LinkedList<ItemType>::ListNode::setLinkToNextNode(ListNode* newLink) { link
 
 template<typename ItemType>
 void LinkedList<ItemType>::ListNode::setLinkToPrevNode(ListNode* newLink)  { linkToPrevNode_ = newLink; }
+
+template<typename ItemType>
+std::ostream& operator<<(std::ostream& os, const LinkedList<ItemType>& list)
+{
+    os << "[";
+    const typename LinkedList<ItemType>::ListNode* current = list.headPtr_;
+    while (current != nullptr)
+    {
+        os << current->getValue();
+        if (current->getLinkToNextNode() != nullptr)
+        {
+            os << ", ";
+        }
+        current = current->getLinkToNextNode();
+    }
+    os << "]";
+    return os;
+}
+
+template<typename ItemType>
+std::istream& operator>>(std::istream& is, LinkedList<ItemType>& list)
+{
+    uint32_t size;
+    std::cout << "Введите количество элементов: ";
+    is >> size;
+    
+    std::cout << "Введите " << size << " элементов:" << std::endl;
+    for (uint32_t i = 0; i < size; ++i)
+    {
+        ItemType value;
+        is >> value;
+        list.addToTail(value);
+    }
+    
+    return is;
+}
