@@ -313,6 +313,77 @@ int DynamicArray<ItemType>::removeAllByValue(const ItemType& value)
     return count;
 }
 
+template<typename ItemType>
+DynamicArray<ItemType>& DynamicArray<ItemType>::operator+=(const ItemType& value)
+{
+    insertAt(arrayLength_, value);
+    return *this;
+}
+
+template<typename ItemType>
+typename DynamicArray<ItemType>::iterator DynamicArray<ItemType>::insert(iterator position, const ItemType& value)
+{
+    int index = position - begin();
+    
+    if (index < 0 || index > arrayLength_) {
+        return end();
+    }
+    
+    if (insertAt(index, value)) {
+        return iterator(arrayData_, index);
+    }
+    
+    return end();
+}
+
+template<typename ItemType>
+typename DynamicArray<ItemType>::iterator DynamicArray<ItemType>::erase(iterator position)
+{
+    if (position == end() || arrayLength_ == 0) {
+        return end();
+    }
+    
+    int index = position - begin();
+    
+    if (index < 0 || index >= arrayLength_) {
+        return end();
+    }
+    
+    if (removeAt(index)) {
+        if (index == arrayLength_) {
+            return end();
+        }
+        return iterator(arrayData_, index);
+    }
+    
+    return end();
+}
+
+template<typename ItemType>
+typename DynamicArray<ItemType>::iterator DynamicArray<ItemType>::erase(iterator first, iterator last)
+{
+    if (first == last || arrayLength_ == 0) {
+        return last;
+    }
+    
+    int startIndex = first - begin();
+    int endIndex = last - begin();
+    int count = endIndex - startIndex;
+    
+    if (count <= 0) return last;
+    
+    if (startIndex < 0 || endIndex > arrayLength_) {
+        return end();
+    }
+    
+    for (int i = 0; i < count; i++) {
+        if (!removeAt(startIndex)) {
+            return iterator(arrayData_, startIndex);
+        }
+    }
+    
+    return iterator(arrayData_, startIndex);
+}
 
 template class DynamicArray<int>;
 template class DynamicArray<double>;
