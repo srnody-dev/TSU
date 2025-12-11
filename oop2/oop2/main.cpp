@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include "dynamicarray.hpp"
+#include "dynamicarrayInt.hpp"
 
 using namespace std;
 
@@ -181,6 +182,18 @@ int main()
     floatArr.insertAt(1, 2.2f);
     cout << "floatArr: ";
     floatArr.print();
+    
+    
+    DynamicArrayInt arrInt;
+    arrInt.insertAt(0, 1);
+    arrInt.insertAt(1, 2);
+    arrInt.insertAt(2, 3);
+    
+    cout << "IntArr не шаблонный: ";
+    arrInt.print();
+    cout << "Размер массива: " << arrInt.getLength() << endl;
+    cout << "isEmpty? " << (arrInt.isEmpty() ? "Да" : "Нет") << endl;
+    
     
     cout << endl << "16) Тест ввода и вывода с консоли:" << endl;
     cout << "Введите массив в формате: сначала размер, затем элементы" << endl;
