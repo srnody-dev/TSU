@@ -141,6 +141,12 @@ public:
     iterator insert(iterator position, const ItemType& value);
     iterator erase(iterator position);
     iterator erase(iterator first, iterator last);
+    
+    template<typename T>
+    friend std::ostream& operator<<(std::ostream& os, const DynamicArray<T>& arr);
+        
+    template<typename T>
+    friend std::istream& operator>>(std::istream& is, DynamicArray<T>& arr);
        
     
 private:
@@ -148,3 +154,36 @@ private:
     int arrayLength_;
 };
 
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const DynamicArray<T>& arr)
+{
+    os << "[";
+    for (int i = 0; i < arr.arrayLength_; i++) {
+        os << arr.arrayData_[i];
+        if (i < arr.arrayLength_ - 1) {
+            os << " ";
+        }
+    }
+    os << "]";
+    return os;
+}
+
+template<typename T>
+std::istream& operator>>(std::istream& is, DynamicArray<T>& arr)
+{
+    delete[] arr.arrayData_;
+    arr.arrayData_ = nullptr;
+    arr.arrayLength_ = 0;
+    
+    int size;
+    if (is >> size && size >= 0) {
+        arr.arrayLength_ = size;
+        if (size > 0) {
+            arr.arrayData_ = new T[size];
+            for (int i = 0; i < size; i++) {
+                is >> arr.arrayData_[i];
+            }
+        }
+    }
+    return is;
+}

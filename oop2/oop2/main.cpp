@@ -182,6 +182,12 @@ int main()
     cout << "floatArr: ";
     floatArr.print();
     
+    cout << endl << "16) Тест ввода и вывода с консоли:" << endl;
+    cout << "Введите массив в формате: сначала размер, затем элементы" << endl;
+    DynamicArray<int> inputArray;
+    cin >> inputArray;
+    cout << endl << "Введенный массив: " << inputArray << endl;
+    cout << "Размер массива: " << inputArray.getLength() << endl;
     
     return 0;
 }
