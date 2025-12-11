@@ -256,7 +256,7 @@ void DynamicArray<ItemType>::swap(DynamicArray& other)
 }
 
 template<typename ItemType>
-int DynamicArray<ItemType>::find(const ItemType& value) const
+int DynamicArray<ItemType>::findReturnIndex(const ItemType& value) const
 {
     for (int i = 0; i < arrayLength_; i++)
     {
@@ -290,7 +290,7 @@ void DynamicArray<ItemType>::sort()
 template<typename ItemType>
 bool DynamicArray<ItemType>::removeByValue(const ItemType& value)
 {
-    int index = find(value);
+    int index = findReturnIndex(value);
     if (index == -1)
         return false;
     
@@ -383,6 +383,82 @@ typename DynamicArray<ItemType>::iterator DynamicArray<ItemType>::erase(iterator
     }
     
     return iterator(arrayData_, startIndex);
+}
+
+template<typename ItemType>
+ItemType& DynamicArray<ItemType>::fingMax()
+{
+    if (arrayLength_ == 0)
+    {
+        throw std::runtime_error("Array is empty");
+    }
+    
+    int maxIndex = 0;
+    for (int i = 1; i < arrayLength_; i++)
+    {
+        if (arrayData_[i] > arrayData_[maxIndex])
+        {
+            maxIndex = i;
+        }
+    }
+    return arrayData_[maxIndex];
+}
+
+template<typename ItemType>
+const ItemType& DynamicArray<ItemType>::fingMax() const
+{
+    if (arrayLength_ == 0)
+    {
+        throw std::runtime_error("Array is empty");
+    }
+    
+    int maxIndex = 0;
+    for (int i = 1; i < arrayLength_; i++)
+    {
+        if (arrayData_[i] > arrayData_[maxIndex])
+        {
+            maxIndex = i;
+        }
+    }
+    return arrayData_[maxIndex];
+}
+
+template<typename ItemType>
+ItemType& DynamicArray<ItemType>::findMin()
+{
+    if (arrayLength_ == 0)
+    {
+        throw std::runtime_error("Array is empty");
+    }
+    
+    int minIndex = 0;
+    for (int i = 1; i < arrayLength_; i++)
+    {
+        if (arrayData_[i] < arrayData_[minIndex])
+        {
+            minIndex = i;
+        }
+    }
+    return arrayData_[minIndex];
+}
+
+template<typename ItemType>
+const ItemType& DynamicArray<ItemType>::findMin() const
+{
+    if (arrayLength_ == 0)
+    {
+        throw std::runtime_error("Array is empty");
+    }
+    
+    int minIndex = 0;
+    for (int i = 1; i < arrayLength_; i++)
+    {
+        if (arrayData_[i] < arrayData_[minIndex])
+        {
+            minIndex = i;
+        }
+    }
+    return arrayData_[minIndex];
 }
 
 template class DynamicArray<int>;

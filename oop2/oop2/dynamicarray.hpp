@@ -121,13 +121,17 @@ public:
     bool removeAt(const int index);
     void print() const;
     void swap(DynamicArray& other);
-    int find(const ItemType& value) const;
+    int findReturnIndex(const ItemType& value) const;
     void sort();
     bool removeByValue(const ItemType& value);
     int removeAllByValue(const ItemType& value);
     DynamicArray& operator+=(const ItemType& value);
-
     
+    ItemType& fingMax();
+    ItemType& findMin();
+    const ItemType& fingMax() const;
+    const ItemType& findMin() const;
+
     iterator begin() { return iterator(arrayData_, 0); }
     iterator end() { return iterator(arrayData_, arrayLength_); }
         
