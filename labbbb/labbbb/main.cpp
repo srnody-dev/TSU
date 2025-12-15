@@ -18,10 +18,10 @@ void printRoad(int route[], int size) {
 void findAccuracyRoute(int currentCity, int count, int cost,bool visited[],
                        int currentRoute[],int bestRoute[], int& bestCost,
                        int worstRoute[], int& worstCost,
-                       int** matrix, int n){
+                       int** matrix, int n, int startCity){
     
     if (count == n) {
-        int finalCost = cost + matrix[currentCity][0];
+        int finalCost = cost + matrix[currentCity][startCity];
         
         if (finalCost < bestCost) {
             bestCost = finalCost;
@@ -45,14 +45,14 @@ void findAccuracyRoute(int currentCity, int count, int cost,bool visited[],
             currentRoute[count] = nextCity;
             
             findAccuracyRoute(nextCity, count + 1, cost + matrix[currentCity][nextCity],
-                         visited, currentRoute, bestRoute, bestCost, worstRoute, worstCost, matrix, n);
+                         visited, currentRoute, bestRoute, bestCost, worstRoute, worstCost, matrix, n,startCity);
             
             visited[nextCity] = false;
         }
     }
 }
 
-int nearestNeighbor(int** matrix, int n, int route[], int startCity = 0) {
+int nearestNeighbor(int** matrix, int n, int route[], int startCity) {
     bool* visited = new bool[n]();
     
     route[0] = startCity;
@@ -152,10 +152,10 @@ double calculateQuality(int heuristicCost, int bestCost, int worstCost) {
 }
 
 
-void runAndPrintExperiment(int matrixSize, int costMin, int costMax, int run) {
+void runAndPrintExperiment(int matrixSize, int costMin, int costMax, int run,int startCity) {
     int** matrix = generateCostMatrix(matrixSize, costMin, costMax);
     
-    cout << "\nМатрица размером " << matrixSize << "на" << matrixSize << endl;
+    cout << "\nМатрица размером " << matrixSize << " на " << matrixSize << endl;
     cout << "Диапазон стоимостей от " << costMin << " до " << costMax << endl;
     
     int* bestRoute = new int[matrixSize + 1];
@@ -172,14 +172,14 @@ void runAndPrintExperiment(int matrixSize, int costMin, int costMax, int run) {
     bestRoute[matrixSize] = -1;
     worstRoute[matrixSize] = -1;
     
-    visited[0] = true;
-    currentRoute[0] = 0;
+    visited[startCity] = true;
+    currentRoute[0] = startCity;
     
     int bestCost = INT_MAX;
     int worstCost = 0;
     
     auto startAccuracy = chrono::high_resolution_clock::now();
-    findAccuracyRoute(0, 1, 0, visited, currentRoute, bestRoute, bestCost, worstRoute, worstCost, matrix, matrixSize);
+    findAccuracyRoute(0, 1, 0, visited, currentRoute, bestRoute, bestCost, worstRoute, worstCost, matrix, matrixSize,startCity);
     
     if (bestCost != INT_MAX) {
         bestRoute[matrixSize] = 0;
@@ -193,7 +193,7 @@ void runAndPrintExperiment(int matrixSize, int costMin, int costMax, int run) {
     int* NeighborRoute = new int[matrixSize + 1];
     
     auto startNeighbor = chrono::high_resolution_clock::now();
-    int NeighborCost = nearestNeighbor(matrix, matrixSize, NeighborRoute, 0);
+    int NeighborCost = nearestNeighbor(matrix, matrixSize, NeighborRoute, startCity);
     auto endNeighbor = chrono::high_resolution_clock::now();
     double NeighborTime = chrono::duration<double>(endNeighbor - startNeighbor).count();
     
@@ -230,6 +230,7 @@ int main() {
     
     int matrixSize;
     int costMin, costMax;
+    int startCity;
     
     cout << "\nВведите количество городов (размер матрицы): ";
     cin >> matrixSize;
@@ -238,6 +239,9 @@ int main() {
         cout << "Ошибка: количество городов должно быть >= 2 " << endl;
         return 1;
     }
+    
+    cout << "Введите начальный город";
+    cin >> startCity;
         
     cout << "Введите минимальную стоимость маршрута: ";
     cin >> costMin;
@@ -255,7 +259,25 @@ int main() {
         << " точный алгоритм может работать долго" << endl;
     }
     
-    runAndPrintExperiment(matrixSize, costMin, costMax,10);
+    runAndPrintExperiment(matrixSize, costMin, costMax,10,startCity);
+    
+    
+    runAndPrintExperiment(4, 1, 10,10,startCity);
+    
+    runAndPrintExperiment(6, 1, 10,10,startCity);
+    
+    runAndPrintExperiment(8, 1, 10,10,startCity);
+    
+    runAndPrintExperiment(10, 1, 10,10,startCity);
+    
+    runAndPrintExperiment(4, 1, 100,10,startCity);
+    
+    runAndPrintExperiment(6, 1, 100,10,startCity);
+    
+    runAndPrintExperiment(8, 1, 100,10,startCity);
+    
+    runAndPrintExperiment(10, 1, 100,10,startCity);
+    
     
     return 0;
 }
