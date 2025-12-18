@@ -28,6 +28,7 @@ void findAccuracyRoute(int currentCity, int count, int cost,bool visited[],
             for (int i = 0; i < n; i++) {
                 bestRoute[i] = currentRoute[i];
             }
+            bestRoute[n] = startCity;
         }
         
         if (finalCost > worstCost) {
@@ -35,6 +36,7 @@ void findAccuracyRoute(int currentCity, int count, int cost,bool visited[],
             for (int i = 0; i < n; i++) {
                 worstRoute[i] = currentRoute[i];
             }
+            worstRoute[n] = startCity;
         }
         return;
     }
@@ -43,10 +45,14 @@ void findAccuracyRoute(int currentCity, int count, int cost,bool visited[],
         if (!visited[nextCity]) {
             visited[nextCity] = true;
             currentRoute[count] = nextCity;
-            
-            findAccuracyRoute(nextCity, count + 1, cost + matrix[currentCity][nextCity],
-                         visited, currentRoute, bestRoute, bestCost, worstRoute, worstCost, matrix, n,startCity);
-            
+    
+            if (currentCity >= 0 && currentCity < n &&
+                nextCity >= 0 && nextCity < n) {
+                findAccuracyRoute(nextCity, count + 1,
+                             cost + matrix[currentCity][nextCity],
+                             visited, currentRoute, bestRoute, bestCost,
+                             worstRoute, worstCost, matrix, n, startCity);
+            }
             visited[nextCity] = false;
         }
     }
@@ -65,11 +71,12 @@ int nearestNeighbor(int** matrix, int n, int route[], int startCity) {
         int minDist = INT_MAX;
         
         for (int next = 0; next < n; next++) {
-            if (!visited[next] && matrix[currentCity][next] < minDist) {
-                minDist = matrix[currentCity][next];
-                nearest = next;
-            }
-        }
+                   if (currentCity >= 0 && currentCity < n &&
+                       !visited[next] && matrix[currentCity][next] < minDist) {
+                       minDist = matrix[currentCity][next];
+                       nearest = next;
+                   }
+               }
         
         route[i] = nearest;
         visited[nearest] = true;
@@ -77,8 +84,10 @@ int nearestNeighbor(int** matrix, int n, int route[], int startCity) {
         currentCity = nearest;
     }
     
-    totalCost += matrix[currentCity][startCity];
-    route[n] = startCity;
+    if (currentCity >= 0 && currentCity < n && startCity >= 0 && startCity < n) {
+            totalCost += matrix[currentCity][startCity];
+            route[n] = startCity;
+        }
     
     delete[] visited;
     return totalCost;
@@ -158,6 +167,8 @@ void runAndPrintExperiment(int matrixSize, int costMin, int costMax, int run,int
     cout << "\nМатрица размером " << matrixSize << " на " << matrixSize << endl;
     cout << "Диапазон стоимостей от " << costMin << " до " << costMax << endl;
     
+    printMatrix(matrix,matrixSize);
+    
     int* bestRoute = new int[matrixSize + 1];
     int* worstRoute = new int[matrixSize + 1];
     int* currentRoute = new int[matrixSize];
@@ -179,14 +190,8 @@ void runAndPrintExperiment(int matrixSize, int costMin, int costMax, int run,int
     int worstCost = 0;
     
     auto startAccuracy = chrono::high_resolution_clock::now();
-    findAccuracyRoute(0, 1, 0, visited, currentRoute, bestRoute, bestCost, worstRoute, worstCost, matrix, matrixSize,startCity);
+    findAccuracyRoute(startCity, 1, 0, visited, currentRoute, bestRoute, bestCost, worstRoute, worstCost, matrix, matrixSize,startCity);
     
-    if (bestCost != INT_MAX) {
-        bestRoute[matrixSize] = 0;
-    }
-    if (worstCost > 0) {
-        worstRoute[matrixSize] = 0;
-    }
     auto endAccuracy = chrono::high_resolution_clock::now();
     double AccuracyTime = chrono::duration<double>(endAccuracy - startAccuracy).count();
     
