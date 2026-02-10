@@ -68,4 +68,5 @@ int main() {
         std::cout << "Ошибка сортировки \n";
 
     return 0;
+    
 }
