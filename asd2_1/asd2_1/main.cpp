@@ -49,6 +49,95 @@ bool isFileContainsSortedArray(const std::string &fileName) {
     return true;
 }
 
+void splitFile(const std::string &inputFile, const std::string &outputFile1, const std::string &outputFile2, int p) {
+    std::ifstream in(inputFile);
+    std::ofstream out[2] = { std::ofstream(outputFile1), std::ofstream(outputFile2) };
+    int n;
+    in >> n;
+    int currentOutputIndex = 0;
+    int currentNumber;
+    int numbersCount[2] = {0,0};
+
+    while (in >> currentNumber) {
+        for (int i = 0; i < p; i++) {
+            if (in.eof()) break;
+            out[currentOutputIndex] << currentNumber << " ";
+            numbersCount[currentOutputIndex]++;
+            if (!(in >> currentNumber)) break;
+        }
+        currentOutputIndex = 1 - currentOutputIndex;
+    }
+
+    out[0].close();
+    out[1].close();
+}
+
+void mergeFiles(const std::string &inputFile1, const std::string &inputFile2,
+                const std::string &outputFile1, const std::string &outputFile2, int p) {
+    std::ifstream in[2] = { std::ifstream(inputFile1), std::ifstream(inputFile2) };
+    std::ofstream out[2] = { std::ofstream(outputFile1), std::ofstream(outputFile2) };
+
+    int currentNumbers[2], hasNumbers[2];
+    hasNumbers[0] = (in[0] >> currentNumbers[0]) ? 1 : 0;
+    hasNumbers[1] = (in[1] >> currentNumbers[1]) ? 1 : 0;
+
+    int currentOutputIndex = 0;
+    while (hasNumbers[0] || hasNumbers[1]) {
+        int i = 0, j = 0;
+        while (i < p && j < p && hasNumbers[0] && hasNumbers[1]) {
+            if (currentNumbers[0] <= currentNumbers[1]) {
+                out[currentOutputIndex] << currentNumbers[0] << " ";
+                hasNumbers[0] = (in[0] >> currentNumbers[0]) ? 1 : 0;
+                i++;
+            } else {
+                out[currentOutputIndex] << currentNumbers[1] << " ";
+                hasNumbers[1] = (in[1] >> currentNumbers[1]) ? 1 : 0;
+                j++;
+            }
+        }
+        while (i < p && hasNumbers[0]) {
+            out[currentOutputIndex] << currentNumbers[0] << " ";
+            hasNumbers[0] = (in[0] >> currentNumbers[0]) ? 1 : 0;
+            i++;
+        }
+        while (j < p && hasNumbers[1]) {
+            out[currentOutputIndex] << currentNumbers[1] << " ";
+            hasNumbers[1] = (in[1] >> currentNumbers[1]) ? 1 : 0;
+            j++;
+        }
+        currentOutputIndex = 1 - currentOutputIndex;
+    }
+
+    in[0].close();
+    in[1].close();
+    out[0].close();
+    out[1].close();
+}
+
+void directMergeSort(const std::string &inputFile) {
+    std::string A = inputFile;
+    std::string B = "B.txt";
+    std::string C = "C.txt";
+    std::string D = "D.txt";
+
+    int p = 1;
+    splitFile(A, C, D, p);
+
+    bool sortingComplete = false;
+    while (!sortingComplete) {
+        mergeFiles(C, D, A, B, p);
+        p *= 2;
+        std::ifstream checkFileB(B);
+        if (checkFileB.peek() == std::ifstream::traits_type::eof()) break;
+
+        mergeFiles(A, B, C, D, p);
+        p *= 2;
+        std::ifstream chechFileD(D);
+        if (chechFileD.peek() == std::ifstream::traits_type::eof()) break;
+    }
+}
+
+
 int main() {
     char cwd[1024];
     getcwd(cwd, sizeof(cwd));
@@ -61,6 +150,8 @@ int main() {
         std::cerr << "Ошибка создания файла\n";
         return -1;
     }
+    
+    directMergeSort(fileName);
 
     if (isFileContainsSortedArray(fileName))
         std::cout << "Файл успешно отсортирован \n";
