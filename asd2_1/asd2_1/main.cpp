@@ -49,7 +49,7 @@ bool isFileContainsSortedArray(const std::string &fileName) {
     return true;
 }
 
-void splitFile(const std::string &inputFile, const std::string &outputFile1, const std::string &outputFile2, int p) {
+void splitFileDirect(const std::string &inputFile, const std::string &outputFile1, const std::string &outputFile2, int p) {
     std::ifstream in(inputFile);
     std::ofstream out[2] = { std::ofstream(outputFile1), std::ofstream(outputFile2) };
     int n;
@@ -65,14 +65,14 @@ void splitFile(const std::string &inputFile, const std::string &outputFile1, con
             numbersCount[currentOutputIndex]++;
             if (!(in >> currentNumber)) break;
         }
-        currentOutputIndex = 1 - currentOutputIndex;
+        currentOutputIndex = (currentOutputIndex == 0) ? 1 : 0;
     }
 
     out[0].close();
     out[1].close();
 }
 
-void mergeFiles(const std::string &inputFile1, const std::string &inputFile2,
+void mergeFilesDirect(const std::string &inputFile1, const std::string &inputFile2,
                 const std::string &outputFile1, const std::string &outputFile2, int p) {
     std::ifstream in[2] = { std::ifstream(inputFile1), std::ifstream(inputFile2) };
     std::ofstream out[2] = { std::ofstream(outputFile1), std::ofstream(outputFile2) };
@@ -105,7 +105,7 @@ void mergeFiles(const std::string &inputFile1, const std::string &inputFile2,
             hasNumbers[1] = (in[1] >> currentNumbers[1]) ? 1 : 0;
             j++;
         }
-        currentOutputIndex = 1 - currentOutputIndex;
+        currentOutputIndex = (currentOutputIndex == 0) ? 1 : 0;
     }
 
     in[0].close();
@@ -121,19 +121,142 @@ void directMergeSort(const std::string &inputFile) {
     std::string D = "D.txt";
 
     int p = 1;
-    splitFile(A, C, D, p);
+    splitFileDirect(A, C, D, p);
 
     bool sortingComplete = false;
     while (!sortingComplete) {
-        mergeFiles(C, D, A, B, p);
+        mergeFilesDirect(C, D, A, B, p);
         p *= 2;
         std::ifstream checkFileB(B);
         if (checkFileB.peek() == std::ifstream::traits_type::eof()) break;
 
-        mergeFiles(A, B, C, D, p);
+        mergeFilesDirect(A, B, C, D, p);
         p *= 2;
         std::ifstream chechFileD(D);
         if (chechFileD.peek() == std::ifstream::traits_type::eof()) break;
+    }
+}
+
+
+void splitFileNatural(const std::string &input, const std::string &out1, const std::string &out2) {
+    std::ifstream in(input);
+    std::ofstream out[2] = { std::ofstream(out1), std::ofstream(out2) };
+
+    int n;
+    in >> n;
+
+    int current, next;
+    if (!(in >> current)) return;
+
+    int currentOutputIndex = 0;
+
+    while (true) {
+        out[currentOutputIndex] << current << " ";
+        if (!(in >> next)) break;
+
+        if (current > next)
+            currentOutputIndex = (currentOutputIndex == 0) ? 1 : 0;
+        current = next;
+    }
+
+    in.close();
+    out[0].close();
+    out[1].close();
+}
+
+void mergeFilesNatural(const std::string &in1, const std::string &in2,
+                  const std::string &out1, const std::string &out2) {
+    std::ifstream in[2] = { std::ifstream(in1), std::ifstream(in2) };
+    std::ofstream out[2] = { std::ofstream(out1), std::ofstream(out2) };
+
+
+    int curValue[2], nextValuee[2];
+    int hasNumbers[2];
+
+    hasNumbers[0] = (in[0] >> curValue[0]) ? 1 : 0;
+    hasNumbers[1] = (in[1] >> curValue[1]) ? 1 : 0;
+
+    int curOutIndex = 0;
+
+    while (hasNumbers[0] && hasNumbers[1]) {
+        int curInIndex = (curValue[0] <= curValue[1]) ? 0 : 1;
+
+        out[curOutIndex] << curValue[curInIndex] << " ";
+
+        if (in[curInIndex] >> nextValuee[curInIndex]) {
+            if (nextValuee[curInIndex] < curValue[curInIndex]) {
+                curInIndex = (curInIndex == 0) ? 1 : 0;
+
+
+                out[curOutIndex] << curValue[curInIndex] << " ";
+                if (!(in[curInIndex] >> nextValuee[curInIndex]))
+                    hasNumbers[curInIndex] = 0;
+
+                while (hasNumbers[curInIndex] && nextValuee[curInIndex] >= curValue[curInIndex]) {
+                    curValue[curInIndex] = nextValuee[curInIndex];
+                    out[curOutIndex] << curValue[curInIndex] << " ";
+                    if (!(in[curInIndex] >> nextValuee[curInIndex])) {
+                        hasNumbers[curInIndex] = 0; break;
+                    }
+                }
+
+                if (hasNumbers[0]) curValue[0] = nextValuee[0];
+                if (hasNumbers[1]) curValue[1] = nextValuee[1];
+
+                curOutIndex = (curOutIndex == 0) ? 1 : 0;
+
+            } else {
+                curValue[curInIndex] = nextValuee[curInIndex];
+            }
+        } else {
+            hasNumbers[curInIndex] = 0;
+        }
+    }
+
+    for (int i = 0; i < 2; ++i) {
+        while (hasNumbers[i]) {
+            out[curOutIndex] << curValue[i] << " ";
+            if (in[i] >> nextValuee[i]) {
+                if (nextValuee[i] < curValue[i]) curOutIndex = (curOutIndex == 0) ? 1 : 0;
+                curValue[i] = nextValuee[i];
+            } else {
+                hasNumbers[i] = 0;
+            }
+        }
+    }
+
+    in[0].close();
+    in[1].close();
+    out[0].close();
+    out[1].close();
+}
+
+void naturalMergeSort(const std::string &inputFile) {
+    std::string A = inputFile;
+    std::string B = "B.txt";
+    std::string C = "C.txt";
+    std::string D = "D.txt";
+
+    splitFileNatural(A, C, D);
+
+    
+    std::ifstream check(D);
+    if (check.peek() == std::ifstream::traits_type::eof())
+        return;
+    
+
+    while (true) {
+        mergeFilesNatural(C, D, A, B);
+
+        std::ifstream checkB(B);
+        if (checkB.peek() == std::ifstream::traits_type::eof())
+            break;
+
+        mergeFilesNatural(A, B, C, D);
+
+        std::ifstream checkD(D);
+        if (checkD.peek() == std::ifstream::traits_type::eof())
+            break;
     }
 }
 
@@ -143,15 +266,18 @@ int main() {
     getcwd(cwd, sizeof(cwd));
     printf("Текущая директория: %s\n\n", cwd);
     std::string fileName = "file.txt";
-    int numbersCount = 100000;
-    int maxNumberValue = 1000;
+    int numbersCount = 10000;
+    int maxNumberValue = 100000;
 
     if (!createFileWithRandomNumbers(fileName, numbersCount, maxNumberValue)) {
         std::cerr << "Ошибка создания файла\n";
         return -1;
     }
     
-    directMergeSort(fileName);
+    //directMergeSort(fileName);
+    naturalMergeSort(fileName);
+    
+
 
     if (isFileContainsSortedArray(fileName))
         std::cout << "Файл успешно отсортирован \n";
