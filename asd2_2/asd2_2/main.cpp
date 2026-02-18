@@ -43,6 +43,39 @@ private:
             if (!node) return 0;
             return 1 + countNodes(node->left) + countNodes(node->right);
         }
+    
+    TreeNode* findNode(TreeNode* node, int key) const {
+            if (!node) return nullptr;
+            if (node->key == key) return node;
+
+            TreeNode* left = findNode(node->left, key);
+            if (left) return left;
+
+            return findNode(node->right, key);
+        }
+    
+    bool removeNode(TreeNode*& node, int key) {
+            if (!node) return false;
+
+            if (node->key == key) {
+                clear(node);
+                node = nullptr;
+                return true;
+            }
+
+            return removeNode(node->left, key) || removeNode(node->right, key);
+        }
+    
+    void printHorizont(TreeNode* node, int level) const {
+            if (!node) return;
+
+            printHorizont(node->right, level + 1);
+
+            for (int i = 0; i < level; i++) std::cout << "      ";
+            std::cout << node->key << std::endl;
+
+            printHorizont(node->left, level + 1);
+        }
 
 
 public:
@@ -111,6 +144,18 @@ public:
     int getNodesCount() const {
             return countNodes(root);
         }
+    
+    bool remove(int key) {
+            return removeNode(root, key);
+        }
+
+        TreeNode* find(int key) const {
+            return findNode(root, key);
+        }
+
+        void print() const {
+            printHorizont(root, 0);
+        }
 
 };
 
@@ -124,8 +169,23 @@ int main() {
     tree.insert(97);
     tree.insert(197);
     
+    std::cout << "Дерево:\n";
+        tree.print();
     
     std::cout << "\nКоличество узлов: " << tree.getNodesCount() << std::endl;
+    
+    int key = 97;
+        if (tree.find(key))
+            std::cout << "Найден узел " << key << std::endl;
+        else
+            std::cout << "Узел " << key << " не найден" << std::endl;
 
+        tree.remove(97);
+
+        std::cout << "\nПосле удаления:\n";
+        tree.print();
+
+    
+    std::cout << "\nКоличество узлов: " << tree.getNodesCount() << std::endl;
 }
 
