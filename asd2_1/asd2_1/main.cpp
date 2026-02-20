@@ -11,6 +11,11 @@
 #include <string>
 #include <unistd.h>
 
+enum class MergeSortType {
+    Direct,
+    Natural
+};
+
 bool createFileWithRandomNumbers(const std::string &fileName, const int numbersCount, const int maxNumberValue) {
     std::ofstream out(fileName);
     if (!out.is_open()) return false;
@@ -19,12 +24,9 @@ bool createFileWithRandomNumbers(const std::string &fileName, const int numbersC
     std::mt19937 gen(rd());
     std::uniform_int_distribution<int> dist(0, maxNumberValue);
 
-    out << numbersCount << "\n";
     for (int i = 0; i < numbersCount; i++) {
-        out << dist(gen);
-        if (i != numbersCount - 1) out << " ";
+        out << dist(gen) << " ";
     }
-    out << "\n";
     out.close();
     return true;
 }
@@ -33,14 +35,9 @@ bool isFileContainsSortedArray(const std::string &fileName) {
     std::ifstream in(fileName);
     if (!in.is_open()) return false;
 
-    int n;
-    in >> n;
-    if (n <= 1) return true;
-
     int prev, cur;
-    in >> prev;
-    for (int i = 1; i < n; i++) {
-        if (!(in >> cur)) return false;
+    if (!(in >> prev)) return true;
+    while (in >> cur) {
         if (cur < prev) return false;
         prev = cur;
     }
@@ -52,22 +49,18 @@ bool isFileContainsSortedArray(const std::string &fileName) {
 void splitFileDirect(const std::string &inputFile, const std::string &outputFile1, const std::string &outputFile2, int p) {
     std::ifstream in(inputFile);
     std::ofstream out[2] = { std::ofstream(outputFile1), std::ofstream(outputFile2) };
-    int n;
-    in >> n;
-    int currentOutputIndex = 0;
-    int currentNumber;
-    int numbersCount[2] = {0,0};
+    
+    int current,outIndex = 0;
 
-    while (in >> currentNumber) {
+    while (in >> current) {
         for (int i = 0; i < p; i++) {
-            if (in.eof()) break;
-            out[currentOutputIndex] << currentNumber << " ";
-            numbersCount[currentOutputIndex]++;
-            if (!(in >> currentNumber)) break;
+            out[outIndex] << current << " ";
+            if (!(in >> current)) break;
         }
-        currentOutputIndex = (currentOutputIndex == 0) ? 1 : 0;
+        outIndex = (outIndex == 0) ? 1 : 0;
     }
-
+    
+    in.close();
     out[0].close();
     out[1].close();
 }
@@ -77,35 +70,36 @@ void mergeFilesDirect(const std::string &inputFile1, const std::string &inputFil
     std::ifstream in[2] = { std::ifstream(inputFile1), std::ifstream(inputFile2) };
     std::ofstream out[2] = { std::ofstream(outputFile1), std::ofstream(outputFile2) };
 
-    int currentNumbers[2], hasNumbers[2];
-    hasNumbers[0] = (in[0] >> currentNumbers[0]) ? 1 : 0;
-    hasNumbers[1] = (in[1] >> currentNumbers[1]) ? 1 : 0;
+    int current[2];
+    bool hasValue[2];
+    hasValue[0] = (in[0] >> current[0]) ? 1 : 0;
+    hasValue[1] = (in[1] >> current[1]) ? 1 : 0;
 
-    int currentOutputIndex = 0;
-    while (hasNumbers[0] || hasNumbers[1]) {
+    int outIndex = 0;
+    while (hasValue[0] || hasValue[1]) {
         int i = 0, j = 0;
-        while (i < p && j < p && hasNumbers[0] && hasNumbers[1]) {
-            if (currentNumbers[0] <= currentNumbers[1]) {
-                out[currentOutputIndex] << currentNumbers[0] << " ";
-                hasNumbers[0] = (in[0] >> currentNumbers[0]) ? 1 : 0;
+        while (i < p && j < p && hasValue[0] && hasValue[1]) {
+            if (current[0] <= current[1]) {
+                out[outIndex] << current[0] << " ";
+                hasValue[0] = (in[0] >> current[0]) ? 1 : 0;
                 i++;
             } else {
-                out[currentOutputIndex] << currentNumbers[1] << " ";
-                hasNumbers[1] = (in[1] >> currentNumbers[1]) ? 1 : 0;
+                out[outIndex] << current[1] << " ";
+                hasValue[1] = (in[1] >> current[1]) ? 1 : 0;
                 j++;
             }
         }
-        while (i < p && hasNumbers[0]) {
-            out[currentOutputIndex] << currentNumbers[0] << " ";
-            hasNumbers[0] = (in[0] >> currentNumbers[0]) ? 1 : 0;
+        while (i < p && hasValue[0]) {
+            out[outIndex] << current[0] << " ";
+            hasValue[0] = (in[0] >> current[0]) ? 1 : 0;
             i++;
         }
-        while (j < p && hasNumbers[1]) {
-            out[currentOutputIndex] << currentNumbers[1] << " ";
-            hasNumbers[1] = (in[1] >> currentNumbers[1]) ? 1 : 0;
+        while (j < p && hasValue[1]) {
+            out[outIndex] << current[1] << " ";
+            hasValue[1] = (in[1] >> current[1]) ? 1 : 0;
             j++;
         }
-        currentOutputIndex = (currentOutputIndex == 0) ? 1 : 0;
+        outIndex = (outIndex == 0) ? 1 : 0;
     }
 
     in[0].close();
@@ -123,8 +117,7 @@ void directMergeSort(const std::string &inputFile) {
     int p = 1;
     splitFileDirect(A, C, D, p);
 
-    bool sortingComplete = false;
-    while (!sortingComplete) {
+    while (true) {
         mergeFilesDirect(C, D, A, B, p);
         p *= 2;
         std::ifstream checkFileB(B);
@@ -142,20 +135,18 @@ void splitFileNatural(const std::string &input, const std::string &out1, const s
     std::ifstream in(input);
     std::ofstream out[2] = { std::ofstream(out1), std::ofstream(out2) };
 
-    int n;
-    in >> n;
 
     int current, next;
     if (!(in >> current)) return;
 
-    int currentOutputIndex = 0;
+    int outIndex = 0;
 
     while (true) {
-        out[currentOutputIndex] << current << " ";
+        out[outIndex] << current << " ";
         if (!(in >> next)) break;
 
         if (current > next)
-            currentOutputIndex = (currentOutputIndex == 0) ? 1 : 0;
+            outIndex = (outIndex == 0) ? 1 : 0;
         current = next;
     }
 
@@ -170,57 +161,57 @@ void mergeFilesNatural(const std::string &in1, const std::string &in2,
     std::ofstream out[2] = { std::ofstream(out1), std::ofstream(out2) };
 
 
-    int curValue[2], nextValuee[2];
-    int hasNumbers[2];
+    int current[2], nextValuee[2];
+    bool hasValue[2];
 
-    hasNumbers[0] = (in[0] >> curValue[0]) ? 1 : 0;
-    hasNumbers[1] = (in[1] >> curValue[1]) ? 1 : 0;
+    hasValue[0] = (in[0] >> current[0]) ? 1 : 0;
+    hasValue[1] = (in[1] >> current[1]) ? 1 : 0;
 
-    int curOutIndex = 0;
+    int outIndex = 0;
 
-    while (hasNumbers[0] && hasNumbers[1]) {
-        int curInIndex = (curValue[0] <= curValue[1]) ? 0 : 1;
+    while (hasValue[0] && hasValue[1]) {
+        int inputIndex = (current[0] <= current[1]) ? 0 : 1;
 
-        out[curOutIndex] << curValue[curInIndex] << " ";
+        out[outIndex] << current[inputIndex] << " ";
 
-        if (in[curInIndex] >> nextValuee[curInIndex]) {
-            if (nextValuee[curInIndex] < curValue[curInIndex]) {
-                curInIndex = (curInIndex == 0) ? 1 : 0;
+        if (in[inputIndex] >> nextValuee[inputIndex]) {
+            if (nextValuee[inputIndex] < current[inputIndex]) {
+                inputIndex = (inputIndex == 0) ? 1 : 0;
 
 
-                out[curOutIndex] << curValue[curInIndex] << " ";
-                if (!(in[curInIndex] >> nextValuee[curInIndex]))
-                    hasNumbers[curInIndex] = 0;
+                out[outIndex] << current[inputIndex] << " ";
+                if (!(in[inputIndex] >> nextValuee[inputIndex]))
+                    hasValue[inputIndex] = 0;
 
-                while (hasNumbers[curInIndex] && nextValuee[curInIndex] >= curValue[curInIndex]) {
-                    curValue[curInIndex] = nextValuee[curInIndex];
-                    out[curOutIndex] << curValue[curInIndex] << " ";
-                    if (!(in[curInIndex] >> nextValuee[curInIndex])) {
-                        hasNumbers[curInIndex] = 0; break;
+                while (hasValue[inputIndex] && nextValuee[inputIndex] >= current[inputIndex]) {
+                    current[inputIndex] = nextValuee[inputIndex];
+                    out[outIndex] << current[inputIndex] << " ";
+                    if (!(in[inputIndex] >> nextValuee[inputIndex])) {
+                        hasValue[inputIndex] = 0; break;
                     }
                 }
 
-                if (hasNumbers[0]) curValue[0] = nextValuee[0];
-                if (hasNumbers[1]) curValue[1] = nextValuee[1];
+                if (hasValue[0]) current[0] = nextValuee[0];
+                if (hasValue[1]) current[1] = nextValuee[1];
 
-                curOutIndex = (curOutIndex == 0) ? 1 : 0;
+                outIndex = (outIndex == 0) ? 1 : 0;
 
             } else {
-                curValue[curInIndex] = nextValuee[curInIndex];
+                current[inputIndex] = nextValuee[inputIndex];
             }
         } else {
-            hasNumbers[curInIndex] = 0;
+            hasValue[inputIndex] = 0;
         }
     }
 
     for (int i = 0; i < 2; ++i) {
-        while (hasNumbers[i]) {
-            out[curOutIndex] << curValue[i] << " ";
+        while (hasValue[i]) {
+            out[outIndex] << current[i] << " ";
             if (in[i] >> nextValuee[i]) {
-                if (nextValuee[i] < curValue[i]) curOutIndex = (curOutIndex == 0) ? 1 : 0;
-                curValue[i] = nextValuee[i];
+                if (nextValuee[i] < current[i]) outIndex = (outIndex == 0) ? 1 : 0;
+                current[i] = nextValuee[i];
             } else {
-                hasNumbers[i] = 0;
+                hasValue[i] = 0;
             }
         }
     }
@@ -260,6 +251,13 @@ void naturalMergeSort(const std::string &inputFile) {
     }
 }
 
+void mergeSort(const std::string& fileName, MergeSortType type) {
+    if (type == MergeSortType::Direct)
+           directMergeSort(fileName);
+       else
+           naturalMergeSort(fileName);
+}
+
 
 int main() {
     char cwd[1024];
@@ -274,9 +272,9 @@ int main() {
         return -1;
     }
     
-    //directMergeSort(fileName);
-    naturalMergeSort(fileName);
+    //mergeSort(fileName, MergeSortType::Natural);
     
+    mergeSort(fileName, MergeSortType::Direct);
 
 
     if (isFileContainsSortedArray(fileName))
