@@ -69,6 +69,25 @@ public:
         clear();
     }
     
+    HashTable(const HashTable& other)
+    : size(other.size), hashFunc(other.hashFunc) {
+        
+        table = new Node*[size];
+        
+        for (int i = 0; i < size; i++) {
+            table[i] = nullptr;
+            
+            Node* current = other.table[i];
+            Node** tail = &table[i];
+            
+            while (current) {
+                *tail = new Node(current->key, current->value);
+                tail = &((*tail)->next);
+                current = current->next;
+            }
+        }
+    }
+    
     void insert(int key, const string& value) {
         int bucket = hashFunc->hash(key, 1, size);
 
@@ -101,6 +120,65 @@ public:
         return false;
     }
     
+    void remove(int key) {
+        int bucket = hashFunc->hash(key, 1, size);
+
+        Node* current = table[bucket];
+        Node* prev = nullptr;
+
+        while (current) {
+            if (current->key == key) {
+                if (prev)
+                    prev->next = current->next;
+                else
+                    table[bucket] = current->next;
+
+                delete current;
+                return;
+            }
+            prev = current;
+            current = current->next;
+        }
+    }
+    
+    HashTable& operator=(const HashTable& other) {
+        if (this == &other) return *this;
+        clear();
+        
+        size = other.size;
+        hashFunc = other.hashFunc;
+        
+        table = new Node*[size];
+        for (int i = 0; i < size; i++) {
+            table[i] = nullptr;
+            
+            Node* current = other.table[i];
+            Node** tail = &table[i];
+            
+            while (current) {
+                *tail = new Node(current->key, current->value);
+                tail = &((*tail)->next);
+                current = current->next;
+            }
+        }
+        return *this;
+    }
+    
+    string& operator[](int key) {
+        int bucket = hashFunc->hash(key, 1, size);
+
+        Node* current = table[bucket];
+
+        while (current) {
+            if (current->key == key)
+                return current->value;
+            current = current->next;
+        }
+
+        insert(key, "");
+        return table[bucket]->value;
+    }
+    
     void print() const {
         cout << " Bucket |  Key/Value" << endl;
         for (int i = 0; i < size; i++) {
@@ -115,6 +193,7 @@ public:
             cout << endl;
         }
     }
+    
 };
 
 int main() {
@@ -124,18 +203,25 @@ int main() {
     HashTable table(&hf3);
 
     table.insert(197, "Bentley");
-        table.insert(178, "Jaguar");
-        table.insert(77, "BMW");
-        table.insert(777, "Mercedes");
-        table.insert(78, "Nissan");
-        table.insert(99, "Audi");
-        table.insert(70, "Toyota");
-        table.insert(78, "Tesla");
+    table.insert(178, "Jaguar");
+    table.insert(77, "BMW");
+    table.insert(777, "Mercedes");
+    table.insert(78, "Nissan");
+    table.insert(99, "Audi");
+    table.insert(70, "Toyota");
+    table.insert(78, "Tesla");
 
     table.print();
 
     cout << "\nContains 77? "
          << (table.contains(77) ? "Yes" : "No") << endl;
     
+    table.remove(70);
+    cout << "\nAfter remove:\n";
+    table.print();
+    
+    table[777]="Mercedes-Benz";
+    cout << "\nAfter operator[]:\n";
+    table.print();
 }
 
