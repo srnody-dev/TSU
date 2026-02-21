@@ -56,6 +56,30 @@ private:
         delete[] table;
     }
     
+    void rehash(int newSize) {
+
+        Node** oldTable = table;
+        int oldSize = size;
+
+        size = newSize;
+
+        table = new Node*[size];
+        for (int i = 0; i < size; i++)
+            table[i] = nullptr;
+
+        for (int i = 0; i < oldSize; i++) {
+            Node* current = oldTable[i];
+            while (current) {
+                insert(current->key, current->value);
+                Node* temp = current;
+                current = current->next;
+                delete temp;
+            }
+        }
+
+        delete[] oldTable;
+    }
+    
 public:
     HashTable(IHashFunc* func= nullptr,int N = 10) : size(N), hashFunc(func) {
         
@@ -86,6 +110,15 @@ public:
                 current = current->next;
             }
         }
+    }
+    
+    void resize(int newSize){
+        rehash(newSize);
+    }
+    
+    void changeHashFunc(IHashFunc* newHashFunc){
+        hashFunc=newHashFunc;
+        rehash(size);
     }
     
     void insert(int key, const string& value) {
@@ -222,6 +255,11 @@ int main() {
     
     table[777]="Mercedes-Benz";
     cout << "\nAfter operator[]:\n";
+    table.print();
+    
+    
+    table.resize(20);
+    cout << "\nAfter resize:\n";
     table.print();
 }
 
