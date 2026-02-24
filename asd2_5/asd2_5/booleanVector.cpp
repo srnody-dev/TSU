@@ -5,7 +5,7 @@
 //  Created by srnody on 02.11.2025.
 //
 
-#include "booleanvector.hpp"
+#include "booleanVector.hpp"
 #include <stdexcept>
 #include <cstring>
 #include <algorithm>
