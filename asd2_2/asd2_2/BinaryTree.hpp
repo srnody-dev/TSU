@@ -23,14 +23,20 @@ private:
     
     void clear(TreeNode* node);
     void printHorizont(TreeNode* node, int level) const;
+    TreeNode* copyTree(TreeNode* node);
+    int countNodes(TreeNode* node) const;
     
 public:
     BinaryTree();
+    BinaryTree(const BinaryTree& other);
     ~BinaryTree();
+    BinaryTree& operator=(const BinaryTree& other);
     
     void clear();
     bool isEmpty() const;
     void insert(int key);
     void print() const;
+    int getNodesCount() const;
+    TreeNode* getRoot() const;
 };
 

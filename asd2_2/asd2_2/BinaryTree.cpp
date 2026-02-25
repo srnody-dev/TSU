@@ -14,6 +14,10 @@ BinaryTree::BinaryTree() : root(nullptr) {
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
 }
 
+BinaryTree::BinaryTree(const BinaryTree& other) : root(nullptr) {
+    root = copyTree(other.root);
+}
+
 BinaryTree::~BinaryTree() {
     clear();
 }
@@ -28,6 +32,37 @@ void BinaryTree::clear(TreeNode* node) {
 void BinaryTree::clear(){
     clear(root);
     root=nullptr;
+}
+
+BinaryTree& BinaryTree::operator=(const BinaryTree& other) {
+    if (this == &other) return *this;
+    
+    clear();
+    root = copyTree(other.root);
+    return *this;
+}
+
+TreeNode* BinaryTree::copyTree(TreeNode* node) {
+    if (!node) return nullptr;
+    
+    TreeNode* newNode = new TreeNode(node->key);
+    newNode->left = copyTree(node->left);
+    newNode->right = copyTree(node->right);
+    
+    return newNode;
+}
+
+int BinaryTree::countNodes(TreeNode* node) const {
+    if (!node) return 0;
+    return 1 + countNodes(node->left) + countNodes(node->right);
+}
+
+int BinaryTree::getNodesCount() const {
+    return countNodes(root);
+}
+
+TreeNode* BinaryTree::getRoot() const {
+    return root;
 }
 
 bool BinaryTree::isEmpty() const {

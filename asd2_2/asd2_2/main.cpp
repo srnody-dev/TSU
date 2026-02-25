@@ -19,5 +19,13 @@ int main() {
     
     std::cout << "Дерево:\n";
         tree.print();
+    
+    std::cout << "\nКоличество узлов: " << tree.getNodesCount() << std::endl;
+    
+    BinaryTree tree2=tree;
+    std::cout << "\nКопия дерева:\n";
+        tree2.print();
+    
+    std::cout << "\nКоличество узлов: " << tree.getNodesCount() << std::endl;
 }
 
