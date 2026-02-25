@@ -1,0 +1,77 @@
+//
+//  BinaryTree.cpp
+//  asd2_2
+//
+//  Created by srnody on 25.02.2026.
+//
+
+#include "BinaryTree.hpp"
+#include <iostream>
+#include <cstdlib>
+#include <ctime>
+
+BinaryTree::BinaryTree() : root(nullptr) {
+    std::srand(static_cast<unsigned int>(std::time(nullptr)));
+}
+
+BinaryTree::~BinaryTree() {
+    clear();
+}
+
+void BinaryTree::clear(TreeNode* node) {
+    if (!node) return;
+    clear(node->left);
+    clear(node->right);
+    delete node;
+}
+
+void BinaryTree::clear(){
+    clear(root);
+    root=nullptr;
+}
+
+bool BinaryTree::isEmpty() const {
+    return root == nullptr;
+}
+
+void BinaryTree::insert(int key) {
+    TreeNode* newNode = new TreeNode(key);
+    
+    if (!root) {
+        root = newNode;
+        return;
+    }
+    
+    TreeNode* current = root;
+    
+    while (true) {
+        if (std::rand() % 2 == 0) {
+            if (!current->left) {
+                current->left = newNode;
+                return;
+            }
+            current = current->left;
+        } else {
+            if (!current->right) {
+                current->right = newNode;
+                return;
+            }
+            current = current->right;
+        }
+    }
+}
+
+void BinaryTree::printHorizont(TreeNode* node, int level) const {
+    if (!node) return;
+    
+    printHorizont(node->right, level + 1);
+    
+    for (int i = 0; i < level; i++) std::cout << "\t";
+    std::cout << node->key << std::endl;
+    
+    printHorizont(node->left, level + 1);
+}
+
+void BinaryTree::print() const {
+    printHorizont(root, 0);
+}
