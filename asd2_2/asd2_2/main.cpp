@@ -22,9 +22,21 @@ int main() {
     
     std::cout << "\nКоличество узлов: " << tree.getNodesCount() << std::endl;
     
+    int key = 97;
+    if (tree.find(key))
+        std::cout << "Найден узел " << key << std::endl;
+    else
+        std::cout << "Узел " << key << " не найден" << std::endl;
+    
+    int key2 = 777;
+    tree.remove(key2);
+    std::cout << "\nПосле удаления узла "<< key2 << ":\n";
+    tree.print();
+    std::cout << "\nКоличество узлов: " << tree.getNodesCount() << std::endl;
+    
     BinaryTree tree2=tree;
     std::cout << "\nКопия дерева:\n";
-        tree2.print();
+    tree2.print();
     
     std::cout << "\nКоличество узлов: " << tree.getNodesCount() << std::endl;
 }

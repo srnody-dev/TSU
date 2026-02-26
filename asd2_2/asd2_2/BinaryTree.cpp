@@ -80,20 +80,41 @@ void BinaryTree::insert(int key) {
     TreeNode* current = root;
     
     while (true) {
-        if (std::rand() % 2 == 0) {
-            if (!current->left) {
-                current->left = newNode;
-                return;
-            }
-            current = current->left;
-        } else {
-            if (!current->right) {
-                current->right = newNode;
-                return;
-            }
-            current = current->right;
+        TreeNode*& slot = (std::rand() % 2 == 0) ? current->left : current->right;
+        if (!slot) {
+            slot = newNode;
+            return;
         }
+        current = slot;
     }
+}
+
+bool BinaryTree::removeNode(TreeNode*& node, int key) {
+    if (!node) return false;
+
+    if (node->key == key) {
+        clear(node);
+        node = nullptr;
+        return true;
+    }
+
+    return removeNode(node->left, key) || removeNode(node->right, key);
+}
+
+bool BinaryTree::remove(int key) {
+    return removeNode(root, key);
+}
+
+TreeNode* BinaryTree::findNode(TreeNode* node, int key) const {
+    if (!node || node->key == key)
+        return node;
+
+    TreeNode* result = findNode(node->left, key);
+    return result ? result : findNode(node->right, key);
+}
+
+TreeNode* BinaryTree::find(int key) const {
+    return findNode(root, key);
 }
 
 void BinaryTree::printHorizont(TreeNode* node, int level) const {

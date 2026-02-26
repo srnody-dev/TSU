@@ -25,6 +25,8 @@ private:
     void printHorizont(TreeNode* node, int level) const;
     TreeNode* copyTree(TreeNode* node);
     int countNodes(TreeNode* node) const;
+    TreeNode* findNode(TreeNode* node,int key) const;
+    bool removeNode(TreeNode*& node,int key);
     
 public:
     BinaryTree();
@@ -38,5 +40,7 @@ public:
     void print() const;
     int getNodesCount() const;
     TreeNode* getRoot() const;
+    TreeNode* find(int key) const;
+    bool remove(int key);
 };
 
