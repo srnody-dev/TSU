@@ -16,6 +16,12 @@ enum class MergeSortType {
     Natural
 };
 
+enum class CheckResult{
+    NotSorted,
+    NotOpen,
+    Sorted
+};
+
 bool createFileWithRandomNumbers(const std::string &fileName, const int numbersCount, const int maxNumberValue) {
     std::ofstream out(fileName);
     if (!out.is_open()) return false;
@@ -31,19 +37,18 @@ bool createFileWithRandomNumbers(const std::string &fileName, const int numbersC
     return true;
 }
 
-bool isFileContainsSortedArray(const std::string &fileName) {
+CheckResult isFileContainsSortedArray(const std::string &fileName) {
     std::ifstream in(fileName);
-    if (!in.is_open()) return false;
+    if (!in.is_open()) return CheckResult::NotOpen;
 
     int prev, cur;
-    if (!(in >> prev)) return true;
+    if (!(in >> prev)) return CheckResult::Sorted;
     while (in >> cur) {
-        if (cur < prev) return false;
+        if (cur < prev) return CheckResult::NotSorted;
         prev = cur;
     }
-
-    in.close();
-    return true;
+    
+    return CheckResult::Sorted;
 }
 
 void splitFileDirect(const std::string &inputFile, const std::string &outputFile1, const std::string &outputFile2, int p) {
@@ -277,10 +282,19 @@ int main() {
     mergeSort(fileName, MergeSortType::Direct);
 
 
-    if (isFileContainsSortedArray(fileName))
-        std::cout << "Файл успешно отсортирован \n";
-    else
-        std::cout << "Ошибка сортировки \n";
+    CheckResult result = isFileContainsSortedArray(fileName);
+    
+    switch (result) {
+        case CheckResult::NotSorted:
+            std::cout << "Файл не отсортирован\n";
+            break;
+        case CheckResult::NotOpen:
+            std::cout << "Ошибка открытия файла во время проверки отсортированности массива\n";
+            break;
+        case CheckResult::Sorted:
+            std::cout << "Файл успешно отсортирован \n";
+            break;
+    }
 
     return 0;
     
