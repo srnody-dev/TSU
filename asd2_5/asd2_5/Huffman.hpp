@@ -8,25 +8,24 @@
 #pragma once
 #include <unordered_map>
 #include <string>
-#include "booleanVector.hpp"
 
 class Huffman {
 private:
     struct HuffmanNode {
-        char ch;
+        std::string ch;
         size_t freq;
         HuffmanNode* left;
         HuffmanNode* right;
 
-        HuffmanNode(char c, size_t f)
-            : ch(c), freq(f), left(nullptr), right(nullptr) {}
+        HuffmanNode(const std::string& s, size_t f)
+            : ch(s), freq(f), left(nullptr), right(nullptr) {}
 
         HuffmanNode(HuffmanNode* l, HuffmanNode* r)
-            : ch(0), freq(l->freq + r->freq), left(l), right(r) {}
+            : ch(l->ch + r->ch), freq(l->freq + r->freq), left(l), right(r) {}
     };
 
     HuffmanNode* root = nullptr;
-    std::unordered_map<char, BooleanVector> table;
+    std::unordered_map<char, std::string> table;
 
     void clear(HuffmanNode* n);
 
@@ -35,6 +34,6 @@ public:
     ~Huffman();
 
     void build(const std::string& text);
-    double encode(const std::string& in, const std::string& out);
-    bool decode(const std::string& in, const std::string& out);
+    double encode(const std::string& in, std::string& out);
+    bool decode(const std::string& in, std::string& out);
 };
