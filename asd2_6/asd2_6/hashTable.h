@@ -9,6 +9,8 @@
 
 #include <iostream>
 #include <string>
+#include <sstream>
+#include <stdexcept>
 
 using namespace std;
 
@@ -227,6 +229,29 @@ public:
 
             cout << endl;
         }
+    }
+    
+    std::string getBucketItems(int bucketIndex) const {
+        if (bucketIndex < 0 || bucketIndex >= size)
+            throw std::out_of_range("Invalid bucket index");
+
+        Node* current = table[bucketIndex];
+        if (!current)
+            return "empty";
+
+        std::string result;
+
+        while (current) {
+            result += "[";
+            result += std::to_string(current->key);
+            result += ", ";
+            result += current->value;
+            result += "] ";
+
+            current = current->next;
+        }
+
+        return result;
     }
     
 };
