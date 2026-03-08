@@ -1,94 +1,68 @@
-<<<<<<< HEAD
-# Prerequisites
-*.d
+# macOS
+.DS_Store
 
-# Compiled Object files
-*.slo
-*.lo
+# Xcode 
+*.xcodeproj/
+*.xcworkspace/
+DerivedData/
+*.xcuserstate
+*.xcuserdata
+*.xcscheme
+*.xcbkptlist
+Bookmarks/
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+*.xccheckout
+*.moved-aside
+*.hmap
+*.ipa
+*.xcscmblueprint
+
+# Compiled files
 *.o
 *.obj
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Linker files
-*.ilk
-
-# Debugger Files
-*.pdb
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-=======
-# Игнорировать исполняемые файлы (то, что получается после компиляции)
->>>>>>> af0bde1a4589f09266f8125a4ef77a63af24e2e7
 *.exe
 *.out
 *.app
-
-<<<<<<< HEAD
-# debug information files
-*.dwo
-=======
-# Игнорировать объектные файлы и файлы библиотек (промежуточные этапы компиляции)
-*.o
-*.obj
 *.a
 *.lib
 *.dll
 *.so
 *.dylib
-
-# Игнорировать файлы зависимостей (часто генерируются компилятором)
 *.d
+*.pch
+*.gch
 
-# Игнорировать файлы для IDE, кроме Xcode (например, для CLion, Visual Studio)
-.vs/
-.idea/
-CMakeLists.txt.user
-*.vcxproj
-*.filters
-*.sln
-*.suo
-*.opensdf
-*.sdf
-cmake-build-*/
-
-# Игнорировать архивы и бэкапы
-*.tar.gz
-*.zip
-*.bak
-
-# Игнорировать кэш-файлы и логи
-*.log
-
-# Игнорировать папки сборки, которые вы создаете вручную (самое главное!)
+# Build directories
 build/
 bin/
-obj/
 Debug/
 Release/
 x64/
 x86/
 
-# Игнорировать файлы операционной системы (актуально для macOS)
-.DS_Store
-
->>>>>>> af0bde1a4589f09266f8125a4ef77a63af24e2e7
-asd3/asd3.xcodeproj/project.xcworkspace/
+# Игнор
+asd2/
+asd2Two/
+asd3/
+asd3_backup/
+asd4/
+asd5/
+asd6/
+asd7/
+kkk/
+kkk1/
+labbbb/
+oop2/
+oop3/
+oop4/
+oop5/
+temp_asd3/
+test/
+test_oop/
 tsu_asd3/
+
+# Не игнор
+!asd2_1/
