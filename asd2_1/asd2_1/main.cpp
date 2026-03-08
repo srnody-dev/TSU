@@ -51,7 +51,7 @@ CheckResult isFileContainsSortedArray(const std::string &fileName) {
     return CheckResult::Sorted;
 }
 
-void splitFileDirect(const std::string &inputFile, const std::string &outputFile1, const std::string &outputFile2, int p) {
+void splitFileDirect(const std::string &inputFile, const std::string &outputFile1, const std::string &outputFile2, const int p) {
     std::ifstream in(inputFile);
     std::ofstream out[2] = { std::ofstream(outputFile1), std::ofstream(outputFile2) };
     
@@ -113,6 +113,17 @@ void mergeFilesDirect(const std::string &inputFile1, const std::string &inputFil
     out[1].close();
 }
 
+bool mergePass(const std::string &in1, const std::string &in2,
+               const std::string &out1, const std::string &out2,
+               const std::string &checkFile, int &p)
+{
+    mergeFilesDirect(in1, in2, out1, out2, p);
+    p *= 2;
+
+    std::ifstream check(checkFile);
+    return check.peek() != std::ifstream::traits_type::eof();
+}
+
 void directMergeSort(const std::string &inputFile) {
     std::string A = inputFile;
     std::string B = "B.txt";
@@ -122,17 +133,10 @@ void directMergeSort(const std::string &inputFile) {
     int p = 1;
     splitFileDirect(A, C, D, p);
 
-    while (true) {
-        mergeFilesDirect(C, D, A, B, p);
-        p *= 2;
-        std::ifstream checkFileB(B);
-        if (checkFileB.peek() == std::ifstream::traits_type::eof()) break;
-
-        mergeFilesDirect(A, B, C, D, p);
-        p *= 2;
-        std::ifstream chechFileD(D);
-        if (chechFileD.peek() == std::ifstream::traits_type::eof()) break;
-    }
+    while (
+           mergePass(C, D, A, B, B, p) &&
+           mergePass(A, B, C, D, D, p)
+        );
 }
 
 
@@ -256,7 +260,7 @@ void naturalMergeSort(const std::string &inputFile) {
     }
 }
 
-void mergeSort(const std::string& fileName, MergeSortType type) {
+void mergeSort(const std::string& fileName,const MergeSortType type) {
     if (type == MergeSortType::Direct)
            directMergeSort(fileName);
        else
