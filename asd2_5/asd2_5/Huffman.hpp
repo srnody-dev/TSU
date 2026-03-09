@@ -28,7 +28,7 @@ private:
     std::unordered_map<char, std::string> table;
 
     void clear(HuffmanNode* n);
-
+    void generateCodes(HuffmanNode* node, const std::string& code);
 public:
     Huffman();
     ~Huffman();

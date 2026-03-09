@@ -14,7 +14,7 @@ int main() {
     std::string encoded,decoded;
 
     double huffEncode = huff.encode(input, encoded);
-    std::cout << "encode(): " << huffEncode << std::endl;
+    std::cout << "Compression Ratio: " << huffEncode << std::endl;
 
     bool huddDecode = huff.decode(encoded, decoded);
     std::cout << "decode(): " << huddDecode << std::endl;

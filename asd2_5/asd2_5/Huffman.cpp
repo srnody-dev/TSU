@@ -57,7 +57,38 @@ void Huffman::build(const std::string& text) {
     
     root = nodeQueue.top();
     std::cout << "Root node: [" << root->ch << ":" << root->freq << "]\n";
+    
+    generateCodes(root, "");
+}
+
+void Huffman::generateCodes(HuffmanNode* node, const std::string& code) {
+    if (!node) return;
+
+    if (!node->left && !node->right) {
+        table[node->ch[0]] = code;
+        std::cout << node->ch << " -> " << code << "\n";
+        return;
+    }
+
+    generateCodes(node->left, code + "0");
+    generateCodes(node->right, code + "1");
 }
     
-double Huffman::encode(const std::string&, std::string&) { return -1; }
+double Huffman::encode(const std::string& in , std::string& out) {
+    if (!root) build(in);
+    
+    out.clear();
+    
+    for (char c : in) {
+        out += table[c];
+    }
+
+    double originalSize = in.size() * 8.0;
+    double encodedSize = out.size();
+    
+    std::cout << "Encoded string:\n" << out << "\n";
+
+    return encodedSize ? originalSize / encodedSize : 0;
+}
+
 bool Huffman::decode(const std::string&, std::string&) { return false; }
