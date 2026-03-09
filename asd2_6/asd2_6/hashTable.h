@@ -11,6 +11,7 @@
 #include <string>
 #include <sstream>
 #include <stdexcept>
+#include <cmath>
 
 using namespace std;
 
@@ -30,6 +31,22 @@ public:
         int h0 = key % N;
         int h1 = key % (N - 2);
         return (h0 + i * (1 + h1)) % N;
+    }
+};
+
+// хеш функция 2
+// hi(K) = [hi-1(K) × a × N] mod N; a = – (1 – √5) ÷ 2, [ ] – целая часть.
+class HashFunc2 : public IHashFunc {
+public:
+    int hash(int key, int i, int N) const override {
+
+        const double a = (sqrt(5.0) - 1.0) / 2.0;
+
+        int h0 = key % N;
+        
+        int h = static_cast<int>(h0 * a * N) % N;
+
+        return h;
     }
 };
 
@@ -214,6 +231,22 @@ public:
 
         insert(key, "");
         return table[bucket]->value;
+    }
+    
+    void swap(HashTable& other) {
+        if (this == &other) return;
+        
+        Node** tempTable = table;
+        int tempSize = size;
+        IHashFunc* tempHashFunc = hashFunc;
+
+        table = other.table;
+        size = other.size;
+        hashFunc = other.hashFunc;
+
+        other.table = tempTable;
+        other.size = tempSize;
+        other.hashFunc = tempHashFunc;
     }
     
     void print() const {
