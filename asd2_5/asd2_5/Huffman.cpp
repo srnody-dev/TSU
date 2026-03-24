@@ -91,4 +91,37 @@ double Huffman::encode(const std::string& in , std::string& out) {
     return encodedSize ? originalSize / encodedSize : 0;
 }
 
-bool Huffman::decode(const std::string&, std::string&) { return false; }
+bool Huffman::decode(const std::string& in, std::string& out) {
+    out.clear();
+    if (!root) {
+        std::cout << "Huffman tree is empty\n";
+        return false;
+    }
+
+    HuffmanNode* node = root;
+    std::string code;
+
+    for (char c : in) {
+        code += c;
+        node = (c == '0') ? node->left : node->right;
+
+        if (!node) {
+            std::cout << "Invalid code: " << code << "\n";
+            return false;
+        }
+
+        if (!node->left && !node->right) {
+            out += node->ch[0];
+            node = root;
+            code.clear();
+        }
+    }
+
+    if (node != root) {
+        std::cout << "Invalid code ending: " << out << "\n";
+        return false;
+    }
+
+    std::cout << "Decoded string:\n" << out << "\n";
+    return true;
+}
