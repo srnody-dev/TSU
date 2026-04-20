@@ -102,6 +102,9 @@ private:
     }
     
 public:
+
+    int getSize() const { return size; }
+
     HashTable(IHashFunc* func= nullptr,int N = 10) : size(N), hashFunc(func) {
         
         table = new Node*[size];
