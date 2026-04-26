@@ -33,6 +33,7 @@ int main() {
     std::cout << "\nПосле удаления узла "<< key2 << ":\n";
     tree.print();
     std::cout << "\nКоличество узлов: " << tree.getNodesCount() << std::endl;
+    std::cout << "\nВысота дерева: " << tree.getHeight() << std::endl;
     
     BinaryTree tree2=tree;
     std::cout << "\nКопия дерева:\n";

@@ -131,3 +131,39 @@ void BinaryTree::printHorizont(TreeNode* node, int level) const {
 void BinaryTree::print() const {
     printHorizont(root, 0);
 }
+
+TreeNode* BinaryTree::findExtremum(TreeNode* node, std::function<bool(int, int)> compare) const {
+    if (!node) return nullptr;
+    
+    TreeNode* extremumNode = node;
+    TreeNode* leftExtremum = findExtremum(node->getLeft(), compare);
+    TreeNode* rightExtremum = findExtremum(node->getRight(), compare);
+    
+    if (leftExtremum && compare(leftExtremum->getKey(), extremumNode->getKey()))
+        extremumNode = leftExtremum;
+    if (rightExtremum && compare(rightExtremum->getKey(), extremumNode->getKey()))
+        extremumNode = rightExtremum;
+    
+    return extremumNode;
+}
+
+TreeNode* BinaryTree::findMin(TreeNode* node) const {
+    return findExtremum(node, [](int a, int b) { return a < b; });
+}
+
+TreeNode* BinaryTree::findMax(TreeNode* node) const {
+    return findExtremum(node, [](int a, int b) { return a > b; });
+}
+
+int BinaryTree::getHeight(TreeNode* node) const {
+    if (!node) return -1;
+    
+    int leftHeight = getHeight(node->getLeft());
+    int rightHeight = getHeight(node->getRight());
+    
+    return 1 + (leftHeight > rightHeight ? leftHeight : rightHeight);
+}
+
+int BinaryTree::getHeight() const {
+    return getHeight(root);
+}

@@ -6,6 +6,7 @@
 //
 
 #pragma once
+#include <functional>
 class TreeNode {
 public:
     int key;
@@ -15,6 +16,10 @@ public:
     TreeNode() : key(0), left(nullptr), right(nullptr) {}
 
     TreeNode(int k) : key(k), left(nullptr), right(nullptr) {}
+
+    int getKey() const { return key; }
+    TreeNode* getLeft() const { return left; }
+    TreeNode* getRight() const { return right; }
 };
 
 class BinaryTree {
@@ -27,6 +32,10 @@ private:
     int countNodes(TreeNode* node) const;
     TreeNode* findNode(TreeNode* node,int key) const;
     bool removeNode(TreeNode*& node,int key);
+    TreeNode* findMin(TreeNode* node) const;
+    TreeNode* findMax(TreeNode* node) const;
+    TreeNode* findExtremum(TreeNode* node, std::function<bool(int, int)> compare) const;
+    int getHeight(TreeNode* node) const;
     
 public:
     BinaryTree();
@@ -42,5 +51,6 @@ public:
     TreeNode* getRoot() const;
     TreeNode* find(int key) const;
     bool remove(int key);
+    int getHeight() const;
 };
 
