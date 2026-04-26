@@ -35,6 +35,9 @@ int main() {
     std::cout << "\nКоличество узлов: " << tree.getNodesCount() << std::endl;
     std::cout << "\nВысота дерева: " << tree.getHeight() << std::endl;
     
+    std::cout << "Минимальный ключ: " << tree.getMinKey() << std::endl;
+    std::cout << "Максимальный ключ: " << tree.getMaxKey() << std::endl;
+    
     BinaryTree tree2=tree;
     std::cout << "\nКопия дерева:\n";
     tree2.print();

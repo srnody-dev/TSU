@@ -167,3 +167,15 @@ int BinaryTree::getHeight(TreeNode* node) const {
 int BinaryTree::getHeight() const {
     return getHeight(root);
 }
+
+int BinaryTree::getMinKey() const {
+    TreeNode* minNode = findMin(root);
+    if (!minNode) throw std::runtime_error("Дерево пустое");
+    return minNode->getKey();
+}
+
+int BinaryTree::getMaxKey() const {
+    TreeNode* maxNode = findMax(root);
+    if (!maxNode) throw std::runtime_error("Дерево пустое");
+    return maxNode->getKey();
+}

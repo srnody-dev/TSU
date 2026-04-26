@@ -18,8 +18,11 @@ public:
     TreeNode(int k) : key(k), left(nullptr), right(nullptr) {}
 
     int getKey() const { return key; }
+    void setKey(int k) { key = k; }
     TreeNode* getLeft() const { return left; }
     TreeNode* getRight() const { return right; }
+    void setLeft(TreeNode* node) { left = node; }
+    void setRight(TreeNode* node) { right = node; }
 };
 
 class BinaryTree {
@@ -52,5 +55,7 @@ public:
     TreeNode* find(int key) const;
     bool remove(int key);
     int getHeight() const;
+    int getMinKey() const;
+    int getMaxKey() const;
 };
 
