@@ -28,6 +28,13 @@ int main() {
     else
         std::cout << "Узел " << key << " не найден" << std::endl;
     
+    std::vector<int> keys = tree.getAllKeys();
+    std::cout << "\nВсе ключи по возрастанию: ";
+    for (int key : keys) {
+        std::cout << key << " ";
+    }
+    std::cout << std::endl;
+    
     int key2 = 777;
     tree.remove(key2);
     std::cout << "\nПосле удаления узла "<< key2 << ":\n";

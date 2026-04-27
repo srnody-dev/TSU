@@ -39,6 +39,7 @@ private:
     TreeNode* findMax(TreeNode* node) const;
     TreeNode* findExtremum(TreeNode* node, std::function<bool(int, int)> compare) const;
     int getHeight(TreeNode* node) const;
+    void getAllKeys(TreeNode* node, std::vector<int>& keys) const;
     
 public:
     BinaryTree();
@@ -57,5 +58,6 @@ public:
     int getHeight() const;
     int getMinKey() const;
     int getMaxKey() const;
+    std::vector<int> getAllKeys() const;
 };
 

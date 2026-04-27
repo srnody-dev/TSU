@@ -179,3 +179,29 @@ int BinaryTree::getMaxKey() const {
     if (!maxNode) throw std::runtime_error("Дерево пустое");
     return maxNode->getKey();
 }
+
+
+void BinaryTree::getAllKeys(TreeNode* node, std::vector<int>& keys) const {
+    if (!node) return;
+    
+    getAllKeys(node->getLeft(), keys);
+    keys.push_back(node->getKey());
+    getAllKeys(node->getRight(), keys);
+}
+
+std::vector<int> BinaryTree::getAllKeys() const {
+    std::vector<int> keys;
+    getAllKeys(root, keys);
+    
+    for (size_t i = 0; i < keys.size(); i++) {
+        for (size_t j = i + 1; j < keys.size(); j++) {
+            if (keys[i] > keys[j]) {
+                int temp = keys[i];
+                keys[i] = keys[j];
+                keys[j] = temp;
+            }
+        }
+    }
+    
+    return keys;
+}
