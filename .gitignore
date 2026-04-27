@@ -1,4 +1,3 @@
-
 asd2/
 asd2_1/
 asd2_2/
@@ -42,10 +41,9 @@ Bookmarks/
 *.app
 *.dSYM/
 
-# !ignore
-!lab3/
+lab3/
 lab2_6/
 testQt/
 ttt/
 asd2_2/
-.DS_Store
+!asd2_5/
