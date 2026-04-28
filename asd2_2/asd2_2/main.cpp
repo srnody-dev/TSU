@@ -6,9 +6,83 @@
 //
 
 #include <iostream>
+/*
+#include <QApplication>
+#include <QWidget>
+#include <QPainter>
+*/
 #include "BinaryTree.hpp"
 
-int main() {
+/*
+class BinaryTreeWidget : public QWidget {
+private:
+    BinaryTree tree;
+    const int NODE_RADIUS = 25;
+    const int NODE_DIAMETER = 50;
+
+    void drawNode(QPainter& painter, TreeNode* node, int x, int y, int offset) {
+        if (!node) return;
+
+        painter.setBrush(QColor(255, 200, 100));
+        painter.setPen(Qt::black);
+        painter.drawEllipse(QPoint(x, y),NODE_RADIUS, NODE_RADIUS);
+
+        painter.drawText(QRect(x - NODE_RADIUS, y - NODE_RADIUS, NODE_DIAMETER, NODE_DIAMETER),Qt::AlignCenter,QString::number(node->getKey()));
+
+        if (node->getLeft()) {
+            int childX = x - offset;
+            int childY = y + 100;
+            painter.drawLine(x, y + NODE_RADIUS, childX, childY - NODE_RADIUS);
+            drawNode(painter, node->getLeft(), childX, childY, offset/2);
+        }
+
+        if (node->getRight()) {
+            int childX = x + offset;
+            int childY = y + 100;
+            painter.drawLine(x, y + NODE_RADIUS, childX, childY - NODE_RADIUS);
+            drawNode(painter, node->getRight(), childX, childY, offset/2);
+        }
+    }
+
+protected:
+    void paintEvent(QPaintEvent*) override {
+        QPainter painter(this);
+        painter.setRenderHint(QPainter::Antialiasing);
+
+        if (!tree.isEmpty()) {
+            drawNode(painter, tree.getRoot(), width()/2, 50, width()/4);
+        }
+    }
+
+public:
+    BinaryTreeWidget(QWidget* parent = nullptr) : QWidget(parent) {
+        setWindowTitle("Бинарное дерево");
+        resize(800, 600);
+
+        tree.insert(799);
+        tree.insert(77);
+        tree.insert(777);
+        tree.insert(97);
+        tree.insert(197);
+        tree.insert(15);
+        tree.insert(999);
+
+    }
+};
+
+*/
+
+int main(int argc, char *argv[]) {
+
+    /*
+    QApplication app(argc, argv);
+    
+    BinaryTreeWidget window;
+    window.show();
+
+    return app.exec();
+     */
+    
     BinaryTree tree;
 
     tree.insert(799);
