@@ -5,9 +5,20 @@
 //  Created by srnody on 19.04.2026.
 //
 
-#ifndef BinarySearchTree_hpp
-#define BinarySearchTree_hpp
+#pragma once
+#include "BinaryTree.hpp"
 
-#include <stdio.h>
+class BinarySearchTree : public BinaryTree {
+public:
+    BinarySearchTree();
+    BinarySearchTree(const BinarySearchTree& other);
 
-#endif /* BinarySearchTree_hpp */
+    BinarySearchTree& operator=(const BinarySearchTree& other);
+
+    void insert(int key) override;
+    TreeNode* find(int key) const override;
+
+    int getMinKey() const override;
+    int getMaxKey() const override;
+
+};

@@ -89,16 +89,30 @@ void BinaryTree::insert(int key) {
     }
 }
 
-bool BinaryTree::removeNode(TreeNode*& node, int key) {
+bool BinaryTree::removeNode(TreeNode*& node, const int key) {
     if (!node) return false;
-
+    
     if (node->key == key) {
-        clear(node);
-        node = nullptr;
+        TreeNode* nodeToDelete = node;
+        
+        if (node->left && node->right) {
+            TreeNode* rightmost = node->left;
+            while (rightmost->right) rightmost = rightmost->right;
+            rightmost->right = node->right;
+            node = node->left;
+        }
+        else {
+            node = (node->left) ? node->left : node->right;
+        }
+        
+        delete nodeToDelete;
         return true;
     }
-
-    return removeNode(node->left, key) || removeNode(node->right, key);
+    
+    if (removeNode(node->left, key)) return true;
+    if (removeNode(node->right, key)) return true;
+    
+    return false;
 }
 
 bool BinaryTree::remove(int key) {
@@ -130,4 +144,68 @@ void BinaryTree::printHorizont(TreeNode* node, int level) const {
 
 void BinaryTree::print() const {
     printHorizont(root, 0);
+}
+
+TreeNode* BinaryTree::findExtremum(TreeNode* node, std::function<bool(int, int)> compare) const {
+    if (!node) return nullptr;
+    
+    TreeNode* extremumNode = node;
+    TreeNode* leftExtremum = findExtremum(node->getLeft(), compare);
+    TreeNode* rightExtremum = findExtremum(node->getRight(), compare);
+    
+    if (leftExtremum && compare(leftExtremum->getKey(), extremumNode->getKey()))
+        extremumNode = leftExtremum;
+    if (rightExtremum && compare(rightExtremum->getKey(), extremumNode->getKey()))
+        extremumNode = rightExtremum;
+    
+    return extremumNode;
+}
+
+TreeNode* BinaryTree::findMin(TreeNode* node) const {
+    return findExtremum(node, [](int a, int b) { return a < b; });
+}
+
+TreeNode* BinaryTree::findMax(TreeNode* node) const {
+    return findExtremum(node, [](int a, int b) { return a > b; });
+}
+
+int BinaryTree::getHeight(TreeNode* node) const {
+    if (!node) return -1;
+    
+    int leftHeight = getHeight(node->getLeft());
+    int rightHeight = getHeight(node->getRight());
+    
+    return 1 + (leftHeight > rightHeight ? leftHeight : rightHeight);
+}
+
+int BinaryTree::getHeight() const {
+    return getHeight(root);
+}
+
+int BinaryTree::getMinKey() const {
+    TreeNode* minNode = findMin(root);
+    if (!minNode) throw std::runtime_error("Дерево пустое");
+    return minNode->getKey();
+}
+
+int BinaryTree::getMaxKey() const {
+    TreeNode* maxNode = findMax(root);
+    if (!maxNode) throw std::runtime_error("Дерево пустое");
+    return maxNode->getKey();
+}
+
+
+void BinaryTree::getAllKeys(TreeNode* node, std::vector<int>& keys) const {
+    if (!node) return;
+    
+    getAllKeys(node->getLeft(), keys);
+    keys.push_back(node->getKey());
+    getAllKeys(node->getRight(), keys);
+}
+
+std::vector<int> BinaryTree::getAllKeys() const {
+    std::vector<int> keys;
+    getAllKeys(root, keys);
+    std::sort(keys.begin(), keys.end());
+    return keys;
 }
