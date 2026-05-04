@@ -88,7 +88,7 @@ void BinaryTree::insert(int key) {
         current = slot;
     }
 }
-
+/*
 bool BinaryTree::removeNode(TreeNode*& node, int key) {
     if (!node) return false;
 
@@ -99,6 +99,37 @@ bool BinaryTree::removeNode(TreeNode*& node, int key) {
     }
 
     return removeNode(node->left, key) || removeNode(node->right, key);
+}
+
+bool BinaryTree::remove(int key) {
+    return removeNode(root, key);
+}
+*/
+
+bool BinaryTree::removeNode(TreeNode*& node, const int key) {
+    if (!node) return false;
+    
+    if (node->key == key) {
+        TreeNode* nodeToDelete = node;
+        
+        if (node->left && node->right) {
+            TreeNode* rightmost = node->left;
+            while (rightmost->right) rightmost = rightmost->right;
+            rightmost->right = node->right;
+            node = node->left;
+        }
+        else {
+            node = (node->left) ? node->left : node->right;
+        }
+        
+        delete nodeToDelete;
+        return true;
+    }
+    
+    if (removeNode(node->left, key)) return true;
+    if (removeNode(node->right, key)) return true;
+    
+    return false;
 }
 
 bool BinaryTree::remove(int key) {
