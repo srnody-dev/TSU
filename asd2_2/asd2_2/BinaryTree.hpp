@@ -7,6 +7,8 @@
 
 #pragma once
 #include <functional>
+#include <vector>
+#include <queue>
 class TreeNode {
 public:
     int key;
@@ -59,5 +61,72 @@ public:
     int getMinKey() const;
     int getMaxKey() const;
     std::vector<int> getAllKeys() const;
+    
+    class iterator {
+    private:
+        std::queue<TreeNode*> q;
+    public:
+        iterator(TreeNode* root) {
+            if (root) q.push(root);
+        }
+        
+        int& operator*() const {
+            return q.front()->key;
+        }
+        
+        iterator& operator++() {
+            TreeNode* current = q.front();
+            q.pop();
+            if (current->left) q.push(current->left);
+            if (current->right) q.push(current->right);
+            return *this;
+        }
+        
+        bool operator==(const iterator& other) const {
+            if (q.empty() && other.q.empty()) return true;
+            if (q.empty() || other.q.empty()) return false;
+            return q.front() == other.q.front();
+        }
+        
+        bool operator!=(const iterator& other) const {
+            return !(*this == other);
+        }
+    };
+    
+    class const_iterator {
+    private:
+        std::queue<const TreeNode*> q;
+    public:
+        const_iterator(const TreeNode* root) {
+            if (root) q.push(root);
+        }
+        
+        const int& operator*() const {
+            return q.front()->key;
+        }
+        
+        const_iterator& operator++() {
+            const TreeNode* current = q.front();
+            q.pop();
+            if (current->left) q.push(current->left);
+            if (current->right) q.push(current->right);
+            return *this;
+        }
+        
+        bool operator==(const const_iterator& other) const {
+            if (q.empty() && other.q.empty()) return true;
+            if (q.empty() || other.q.empty()) return false;
+            return q.front() == other.q.front();
+        }
+        
+        bool operator!=(const const_iterator& other) const {
+            return !(*this == other);
+        }
+    };
+    
+    iterator begin() { return iterator(root); }
+    iterator end() { return iterator(nullptr); }
+    const_iterator begin() const { return const_iterator(root); }
+    const_iterator end() const { return const_iterator(nullptr); }
 };
 
