@@ -22,7 +22,16 @@ int main() {
 
     std::cout << "Дерево:\n";
     tree->print();
-
+    
+    
+    std::vector<int> keys = tree->getAllKeys();
+    
+    std::cout << "\nВсе ключи: ";
+    for (int key : keys) {
+        std::cout << key << " ";
+    }
+    std::cout << std::endl;
+    
     std::cout << "Минимальный ключ: " << tree->getMinKey() << std::endl;
     std::cout << "Максимальный ключ: " << tree->getMaxKey() << std::endl;
     

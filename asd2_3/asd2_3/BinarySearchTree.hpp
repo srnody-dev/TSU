@@ -9,6 +9,8 @@
 #include "BinaryTree.hpp"
 
 class BinarySearchTree : public BinaryTree {
+private:
+    void inOrder(TreeNode* node, std::vector<int>& result) const;
 public:
     BinarySearchTree();
     BinarySearchTree(const BinarySearchTree& other);
@@ -20,5 +22,6 @@ public:
 
     int getMinKey() const override;
     int getMaxKey() const override;
+    std::vector<int> getAllKeys() const override;
 
 };

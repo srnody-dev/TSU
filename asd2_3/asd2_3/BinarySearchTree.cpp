@@ -76,3 +76,15 @@ int BinarySearchTree::getMaxKey() const {
     return current->key;
 }
 
+void BinarySearchTree::inOrder(TreeNode* node, std::vector<int>& result) const {
+    if (!node) return;
+    inOrder(node->left, result);
+    result.push_back(node->key);
+    inOrder(node->right, result);
+}
+
+std::vector<int> BinarySearchTree::getAllKeys() const {
+    std::vector<int> result;
+    inOrder(root, result);
+    return result;
+}
